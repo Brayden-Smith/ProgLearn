@@ -259,11 +259,11 @@ int main() {
     assert(C(1, 2) == ComplexNum(4, 4));
 
     Matrix D(2,2);
-    D(1, 1) = ComplexNum(1, 0);
-    D(2, 2) = ComplexNum(1, 0);
+    D(1, 1) = 1;
+    D(2, 2) = 1;
     Matrix E(2,2);
-    E(1, 1) = ComplexNum(1, 0);
-    E(2,2) = ComplexNum(1, 0);
+    E(1, 1) = 1;
+    E(2,2) = 1;
     Matrix F = matMul(D, E);
     assert(F(1,1) == ComplexNum(1, 0));
     assert(F(2,1) == ComplexNum(0, 0));
