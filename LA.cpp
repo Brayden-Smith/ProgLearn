@@ -70,6 +70,10 @@ public:
     }
     // todo(?) division of two complex numbers
 
+
+    friend ComplexNum operator+(double lhs, const ComplexNum& rhs);
+    friend ComplexNum operator*(double lhs, const ComplexNum& rhs);
+
     // Method declarations
     double getMagnitude() {
         return sqrt((realPart * realPart) + (complexPart * complexPart));
@@ -91,8 +95,27 @@ public:
     double realPart;
     double complexPart;
 };
+// Friend functions for commutativity
+ComplexNum operator+(double lhs, const ComplexNum& rhs) {
+    return ComplexNum(lhs + rhs.realPart, rhs.complexPart);
+}
+
+ComplexNum operator*(double lhs, const ComplexNum& rhs) {
+    return ComplexNum(lhs * rhs.realPart, lhs * rhs.complexPart);
+}
 
 
+
+class Matrix {
+
+
+
+
+
+
+
+
+};
 
 
 
@@ -105,9 +128,9 @@ int main() {
     // Complex number test asserts
     ComplexNum z(3, 2);
     assert(z.getConjugate().complexPart == -2 );
-    assert ((z + 2).realPart == 5);
+    assert ((2 + z).realPart == 5);
     assert((z * -7).complexPart == -14);
-    assert((z * 2).realPart == 6);
+    assert((2 * z).realPart == 6);
     assert((z * 12).realPart == 36);
     assert((z * 0).realPart == 0);
     assert(z.getMagnitude() == sqrt(13));
