@@ -355,19 +355,6 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
     return result;
 }
 
-/*
-ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) {
-    if (u->size() != v->size()) {
-        throw std::invalid_argument("Invalid Dimensions");
-    }
-
-    ComplexNum result(0.0,0.0);
-    for(int i = 0; i < u->size(); i++) {
-        result += (*u)[i] * (*v)[i];
-    }
-    return result;
-}
-*/
 
 //improve once vector class is made will make all this stuff way smaller
 
