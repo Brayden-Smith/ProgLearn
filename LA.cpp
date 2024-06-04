@@ -240,17 +240,16 @@ public:
         return this->entryData[i][j];
     }
 
-    //column access operator
-    std::vector<ComplexNum> operator[](int n) { // Honestly don't know which operator to use for this tried to make as intuitive as possible
+    // Column access operator
+    Matrix operator[](int n) { // Honestly don't know which operator to use for this tried to make as intuitive as possible
 
         if (this->numCols < n || n < 1) {
             throw std::invalid_argument("Index out of bounds");
         }
 
-        std::vector<ComplexNum> result;
-
-        for(int i = 1; i <= this->numRows; i++) {
-            result.push_back(this->operator()(i,n));
+        Matrix result (this->numRows, 1);
+        for(int i = 0; i < this->numRows; i++) {
+            result(i, 0) = this->entryData[i][0];
         }
         return result;
     }
