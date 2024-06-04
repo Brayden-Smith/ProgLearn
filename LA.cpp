@@ -365,8 +365,23 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
 }
 
 
-//improve once vector class is made will make all this stuff way smaller
+// Method to normalize vectors in a matrix (alters matrix upon which it is called)
+void normalizeVectorsInMatrix(Matrix* pointerToMatrix) {
+    for (int i = 0; i < pointerToMatrix->numCols; i++) {
 
+        ComplexNum sumToNorm(0, 0);
+        for (int j = 0; j < pointerToMatrix->numRows; j++) {
+            sumToNorm += pointerToMatrix->entryData[j][i];
+        }
+
+        double magnitude = magnitudeOfNumber(sumToNorm);
+        double oneOverMagnitude = 1/magnitude;
+        for (int j = 0; j < pointerToMatrix->numRows; j++) {
+            pointerToMatrix->entryData[j][i] = pointerToMatrix->entryData[j][i] * oneOverMagnitude;
+        }
+
+    }
+}
 
 Matrix GramSchmidt(Matrix const& M) {
     Matrix result(M.numRows,M.numCols);
@@ -387,6 +402,7 @@ Matrix GramSchmidt(Matrix const& M) {
         }
         result.columnAssign(i,&Uk);
     }
+    normalizeVectorsInMatrix(&result);
     return result;
 }
 
