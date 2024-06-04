@@ -14,79 +14,82 @@
 class ComplexNum {
 public:
     // Constructor
-    ComplexNum(double a = 0, double b = 0) : realPart(a), complexPart(b) {};
+    ComplexNum(double a = 0, double b = 0) : realPart(a), imagPart(b) {};
 
     // Equality operators
     ComplexNum& operator=(ComplexNum const& numToCopy) {
         if (this != &numToCopy) {
             this->realPart = numToCopy.realPart;
-            this->complexPart = numToCopy.complexPart;
+            this->imagPart = numToCopy.imagPart;
         }
         return *this;
     }
     ComplexNum& operator=(double numToCopy) {
         this->realPart = numToCopy;
-        this->complexPart = 0;
+        this->imagPart = 0;
         return *this;
     }
     ComplexNum& operator+=(ComplexNum const& numToAdd) {
         this->realPart += numToAdd.realPart;
-        this->complexPart += numToAdd.complexPart;
+        this->imagPart += numToAdd.imagPart;
         return *this;
     }
 
     bool operator==(const ComplexNum& otherNum) const {
-        return (this->realPart == otherNum.realPart && this->complexPart == otherNum.complexPart);
+        return (this->realPart == otherNum.realPart && this->imagPart == otherNum.imagPart);
+    }
+    bool operator==(double otherNum) const {
+        return (this->realPart == otherNum && this->imagPart == 0);
     }
     bool operator!=(const ComplexNum& otherNum) const {
-        return (!(this->realPart == otherNum.realPart && this->complexPart == otherNum.complexPart));
+        return (!(this->realPart == otherNum.realPart && this->imagPart == otherNum.imagPart));
     }
     // Copy constructors
 
     ComplexNum(const ComplexNum& numToCopy) {
         this->realPart = numToCopy.realPart;
-        this->complexPart = numToCopy.complexPart;
+        this->imagPart = numToCopy.imagPart;
     }
     ComplexNum(double numToCopy) {
         this->realPart = numToCopy;
-        this->complexPart = 0;
+        this->imagPart = 0;
     }
 
     // Arithmetic operators
 
     ComplexNum operator+(ComplexNum const& numToAdd) const {
-        return ComplexNum(this->realPart + numToAdd.realPart, this->complexPart + numToAdd.complexPart);
+        return ComplexNum(this->realPart + numToAdd.realPart, this->imagPart + numToAdd.imagPart);
     }
     ComplexNum operator+(double numToAdd) const {
-        return ComplexNum(this->realPart + numToAdd, this->complexPart);
+        return ComplexNum(this->realPart + numToAdd, this->imagPart);
     }
 
     ComplexNum operator*(ComplexNum const& numToMul) const {
         double a = this->realPart;
-        double b = this->complexPart;
+        double b = this->imagPart;
         double c = numToMul.realPart;
-        double d = numToMul.complexPart;
+        double d = numToMul.imagPart;
 
         return ComplexNum((a * c) - (b * d), (a * d) + (b * c));
     }
     ComplexNum operator*(double numToMul) const {
-        return ComplexNum (numToMul * this->realPart, numToMul * this->complexPart);
+        return ComplexNum (numToMul * this->realPart, numToMul * this->imagPart);
     }
 
     ComplexNum operator-(ComplexNum const& numToSub) const {
-        return ComplexNum(this->realPart - numToSub.realPart, this->complexPart - numToSub.complexPart);
+        return ComplexNum(this->realPart - numToSub.realPart, this->imagPart - numToSub.imagPart);
     }
     ComplexNum operator-(double numToSub) const {
-        return ComplexNum(this->realPart - numToSub, this->complexPart);
+        return ComplexNum(this->realPart - numToSub, this->imagPart);
     }
 
     ComplexNum operator/(double numToDiv) const {
-        return ComplexNum(this->realPart / numToDiv, this->complexPart / numToDiv);
+        return ComplexNum(this->realPart / numToDiv, this->imagPart / numToDiv);
     }
     ComplexNum operator/(ComplexNum const& numToDiv) {
-        double a2SquaredPlusb2Squared = (numToDiv.realPart * numToDiv.realPart) + (numToDiv.complexPart * numToDiv.complexPart);
-        double a = (((this->realPart * numToDiv.realPart) + (this->complexPart * numToDiv.complexPart)) / a2SquaredPlusb2Squared);
-        double b = ((this->complexPart * numToDiv.realPart) - (this->realPart * numToDiv.complexPart)) / a2SquaredPlusb2Squared;
+        double a2SquaredPlusb2Squared = (numToDiv.realPart * numToDiv.realPart) + (numToDiv.imagPart * numToDiv.imagPart);
+        double a = (((this->realPart * numToDiv.realPart) + (this->imagPart * numToDiv.imagPart)) / a2SquaredPlusb2Squared);
+        double b = ((this->imagPart * numToDiv.realPart) - (this->realPart * numToDiv.imagPart)) / a2SquaredPlusb2Squared;
         return ComplexNum(a,b);
     }
     // todo(?) division of two complex numbers
@@ -97,31 +100,45 @@ public:
 
     // Method declarations
     double getMagnitude() const {
-        return sqrt((realPart * realPart) + (complexPart * complexPart));
+        return sqrt((realPart * realPart) + (imagPart * imagPart));
     };
     double getRealPart() const {
         return realPart;
     }
-    double getComplexPart() const {
-        return complexPart;
+    double getImagPart() const {
+        return imagPart;
     }
     ComplexNum getConjugate() const {
         ComplexNum numToReturn;
         numToReturn.realPart = this->realPart;
-        numToReturn.complexPart = this->complexPart * -1;
+        numToReturn.imagPart = this->imagPart * -1;
         return numToReturn;
     }
 
     // Internal values
     double realPart;
-    double complexPart;
+    double imagPart;
 };
 // Friend functions for commutativity
 ComplexNum operator+(double lhs, const ComplexNum& rhs) {
-    return ComplexNum(lhs + rhs.realPart, rhs.complexPart);
+    return ComplexNum(lhs + rhs.realPart, rhs.imagPart);
 }
 ComplexNum operator*(double lhs, const ComplexNum& rhs) {
-    return ComplexNum(lhs * rhs.realPart, lhs * rhs.complexPart);
+    return ComplexNum(lhs * rhs.realPart, lhs * rhs.imagPart);
+}
+
+// External complex conjugate methods added for easier use
+ComplexNum complexConjugate(const ComplexNum& numToConjugate) {
+    ComplexNum numToReturn;
+    numToReturn.realPart = numToConjugate.realPart;
+    numToReturn.imagPart = numToConjugate.imagPart * -1;
+    return numToReturn;
+}
+ComplexNum complexConjugate(double numToConjugate) {
+    ComplexNum numToReturn;
+    numToReturn.realPart = numToConjugate;
+    numToReturn.imagPart = 0;
+    return numToReturn;
 }
 
 
@@ -135,9 +152,7 @@ public:
             throw std::invalid_argument("Invalid size");
         }
     }
-    Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {
-
-    }
+    Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {}
 
     // Arithmetic operators
     Matrix operator +(Matrix const& matrixToAdd) const {
@@ -206,12 +221,11 @@ public:
     }
 
     // Entry access operator
-
     ComplexNum& operator ()(int i, int j) { // Matrix access is one-indexed for more intuitive use. Feel free to change in a future commit if this proves annoying for QR decomposition
-        if (this->numRows < i - 1 || this->numCols < j - 1 || i < 1 || j < 1) {
+        if (this->numRows < i || this->numCols < j || i < 0 || j < 0) {
             throw std::invalid_argument("Entry index out of bounds");
         }
-        return this->entryData[i - 1][j - 1];
+        return this->entryData[i][j];
     }
 
     //column access operator
@@ -276,6 +290,13 @@ Matrix matMul(Matrix const& lhs, Matrix const& rhs) {
     return product;
 } // Slow, but functional
 
+Matrix conjTranspose(Matrix const& matrixToTranspose) {
+    Matrix matrixToReturn(matrixToTranspose.numCols, matrixToTranspose.numRows);
+
+
+}
+
+
 ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) {
     if (u->size() != v->size()) {
         throw std::invalid_argument("Invalid Dimensions");
@@ -290,7 +311,7 @@ ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) 
 
 //improve once vector class is made will make all this stuff way smaller
 
-Matrix GramSchmidt(Matrix* M) {
+Matrix GramSchmidt(Matrix* M) { // todo refactor taking into account zero-based indexing of () operator
     Matrix result(M->numRows,M->numCols);
 
     for(int i = 1; i <= M->numCols; i++) {
@@ -316,44 +337,40 @@ Matrix GramSchmidt(Matrix* M) {
         }
 
         result.columnAssign(i,&Uk);
-        std::cout << "here";
     }
-    std::cout << "here";
     return result;
 }
 
 int main() {
     // Complex number test asserts
     ComplexNum z(3, 2);
-    assert(z.getConjugate().complexPart == -2 );
+    assert(z.getConjugate().imagPart == -2 );
     assert ((2 + z).realPart == 5);
-    assert((z * -7).complexPart == -14);
+    assert((z * -7).imagPart == -14);
     assert((2 * z).realPart == 6);
     assert((z * 12).realPart == 36);
     assert((z * 0).realPart == 0);
     assert(z.getMagnitude() == sqrt(13));
     ComplexNum w(2, 3);
-    assert((z*w).complexPart == 13);
+    assert((z*w).imagPart == 13);
     assert((z*w).realPart == 0);
-
-
 
     // Matrix test asserts
     Matrix A(2, 2);
-    A(1,2) = ComplexNum(1, 0);
-    assert(A(1, 2) == ComplexNum(1, 0));
+    A(0,1) = ComplexNum(1, 0);
+    assert(A(0, 1) == ComplexNum(1, 0));
     Matrix B(2, 2);
-    B(1, 2) = ComplexNum(3, 4);
+    B(0, 1) = ComplexNum(3, 4);
     Matrix C = A + B;
-    assert(C(1, 2) == ComplexNum(4, 4));
+    assert(C(0, 1) == ComplexNum(4, 4));
 
+    // Gram-Schmidt test asserts
     Matrix D(2,2);
-    D(1, 1) = 5;
-    D(1,2) = 1;
-    D(2,1) = 1;
-    D(2, 2) = 6;
+    D(0, 0) = 5;
+    D(0,1) = 1;
+    D(1,0) = 1;
+    D(1, 1) = 6;
     auto G = GramSchmidt(&D);
-    std::cout << "dnak";
 
 
 
