@@ -257,7 +257,7 @@ public:
 
         Matrix result (this->numRows, 1);
         for(int i = 0; i < this->numRows; i++) {
-            result(i, 0) = this->entryData[i][0];
+            result(i, 0) = this->entryData[i][n];
         }
         return result;
     }
@@ -279,7 +279,7 @@ public:
         }
 
         for(int i = 0; i < numRows; i++) {
-            this->entryData[i][n] = (*M)(n,0);
+            this->entryData[i][n] = (*M)(i,0);
         }
     }
 
@@ -382,19 +382,10 @@ Matrix GramSchmidt(Matrix const& M) {
 
             //compute the projection
             ComplexNum quotient = (VdotU / UdotU);
-
-            //bad line
-
             Un = Un * quotient;
-
-
             Uk = Uk - Un;
-
         }
-
-
         result.columnAssign(i,&Uk);
-        std::cout << "here";
     }
     return result;
 }
@@ -439,13 +430,17 @@ int main() {
 
 
     // Gram-Schmidt test asserts
-    Matrix D(2,2);
-    D(0, 0) = 5;
-    D(0,1) = 1;
-    D(1,0) = 1;
-    D(1, 1) = 6;
-    auto G = GramSchmidt(D);
+    Matrix D(3,3);
+    D(0, 0) = 1;
+    D(0,1) = 8;
 
+    D(1,0) = 2;
+    D(1,1) = 1;
+    D(2, 1) = -6;
+    D(2,2) = 1;
+    auto meme = D[1];
+    auto G = GramSchmidt(D);
+    std::cout << "here";
 
 
 
