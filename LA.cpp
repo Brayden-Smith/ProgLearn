@@ -140,6 +140,18 @@ ComplexNum complexConjugate(double numToConjugate) {
     numToReturn.imagPart = 0;
     return numToReturn;
 }
+double magnitudeOfNumber(const ComplexNum& numToMag) {
+    return sqrt((numToMag.realPart * numToMag.realPart) + (numToMag.imagPart * numToMag.imagPart));
+}
+double magnitudeOfNumber(double numToMag) {
+    return abs(numToMag);
+}
+double complexNumToDouble(const ComplexNum& num) {
+    if (num.imagPart != 0) {
+        throw std::invalid_argument("Cannot convert complex number with non-zero imaginary part to double");
+    }
+    return num.realPart;
+}
 
 
 
@@ -222,14 +234,14 @@ public:
 
     // Entry access operator
     ComplexNum& operator ()(int i, int j) { // Matrix access is one-indexed for more intuitive use. Feel free to change in a future commit if this proves annoying for QR decomposition
-        if (this->numRows < i || this->numCols < j || i < 0 || j < 0) {
+        if (this->numRows <= i || this->numCols <= j || i < 0 || j < 0) {
             throw std::invalid_argument("Entry index out of bounds");
         }
         return this->entryData[i][j];
     }
 
     //column access operator
-    std::vector<ComplexNum> operator[](int n) { //Honestly don't know which operator to use for this tried to make as intuitive as possible
+    std::vector<ComplexNum> operator[](int n) { // Honestly don't know which operator to use for this tried to make as intuitive as possible
 
         if (this->numCols < n || n < 1) {
             throw std::invalid_argument("Index out of bounds");
@@ -260,7 +272,7 @@ public:
 
     int numRows;
     int numCols;
-    std::vector<std::vector<ComplexNum>> entryData; //Outer vector is row, inner vector is column. For example, entryData[1][2] accesses the second row, third column
+    std::vector<std::vector<ComplexNum>> entryData; // Outer vector is row, inner vector is column. For example, entryData[1][2] accesses the second row, third column
 };
 Matrix operator*(double lhs, const Matrix &rhs) {
     Matrix matrixToReturn(rhs.numRows, rhs.numRows);
@@ -290,13 +302,53 @@ Matrix matMul(Matrix const& lhs, Matrix const& rhs) {
     return product;
 } // Slow, but functional
 
-Matrix conjTranspose(Matrix const& matrixToTranspose) {
-    Matrix matrixToReturn(matrixToTranspose.numCols, matrixToTranspose.numRows);
+double realTraceOfMatrix(Matrix const& matrixToTrace) { // Only defined for real matrices at the moment
+    if (matrixToTrace.numRows != matrixToTrace.numCols) {
+        throw std::invalid_argument("Trace is only defined for square matrices");
+    }
 
+    double runningTrace = 0;
+    for (int i = 0; i < matrixToTrace.numRows; i++) {
+        double numberToAddToRunningTrace = complexNumToDouble(matrixToTrace.entryData[i][i]);
+        runningTrace += numberToAddToRunningTrace;
+    }
 
+    return runningTrace;
 }
 
+Matrix conjTranspose(Matrix const& matrixToTranspose) {
+    Matrix matrixToReturn(matrixToTranspose.numCols, matrixToTranspose.numRows);
+    for (int i = 0; i < matrixToTranspose.numRows; i++) {
+        for (int j = 0; j < matrixToTranspose.numCols; j++) {
+            ComplexNum transposedEntry = complexConjugate(matrixToTranspose.entryData[i][j]);
+            matrixToReturn.entryData[j][i] = transposedEntry;
+        }
+    }
+    return matrixToReturn;
+}
 
+double frobeniusNorm(Matrix const& matrixToNorm) {
+    Matrix conjugateTransposeMatrix = conjTranspose(matrixToNorm);
+    Matrix matrixStarMatrix = matMul(conjugateTransposeMatrix, matrixToNorm);
+    //std::cout << "Matrix mul has dimensions " << matrixStarMatrix.numRows << "x" << matrixStarMatrix.numCols << std::endl;
+    double trace = realTraceOfMatrix(matrixStarMatrix);
+    return sqrt(trace);
+}
+
+ComplexNum InnerProduct(Matrix& u, Matrix& v) {
+    if (u.numCols != 1 || v.numCols != 1) {
+        throw std::invalid_argument("Vectors must be nx1 matrices");
+    }
+
+    ComplexNum result(0, 0);
+    for (int i = 0; i < u.numRows; i++) {
+        ComplexNum vEntryConjugate = complexConjugate(v(i, 0));
+        result = result + (u(i, 0) * vEntryConjugate);
+    }
+    return result;
+}
+
+/*
 ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) {
     if (u->size() != v->size()) {
         throw std::invalid_argument("Invalid Dimensions");
@@ -308,9 +360,11 @@ ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) 
     }
     return result;
 }
+*/
 
 //improve once vector class is made will make all this stuff way smaller
 
+/*
 Matrix GramSchmidt(Matrix* M) { // todo refactor taking into account zero-based indexing of () operator
     Matrix result(M->numRows,M->numCols);
 
@@ -340,6 +394,7 @@ Matrix GramSchmidt(Matrix* M) { // todo refactor taking into account zero-based 
     }
     return result;
 }
+ */
 
 int main() {
     // Complex number test asserts
@@ -364,13 +419,30 @@ int main() {
     Matrix C = A + B;
     assert(C(0, 1) == ComplexNum(4, 4));
 
+    Matrix CTranspose = conjTranspose(C);
+    assert(CTranspose(1, 0) == ComplexNum(4, -4));
+    assert(CTranspose(0, 1) == ComplexNum(0, 0));
+
+    Matrix matrixToNorm(3, 2);
+    matrixToNorm(0, 0) = 3;
+    matrixToNorm(1 ,0) = 4;
+    matrixToNorm(2, 0) = 2;
+    matrixToNorm(0, 1) = 1;
+    matrixToNorm(1, 1) = ComplexNum(0, 2);
+    matrixToNorm(2, 1) = 1;
+    std::cout << frobeniusNorm(matrixToNorm) << std::endl;
+
+
+
     // Gram-Schmidt test asserts
+    /*
     Matrix D(2,2);
     D(0, 0) = 5;
     D(0,1) = 1;
     D(1,0) = 1;
     D(1, 1) = 6;
     auto G = GramSchmidt(&D);
+     */
 
 
 
