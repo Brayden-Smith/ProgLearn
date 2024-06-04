@@ -179,10 +179,19 @@ public:
         }
         return matrixToReturn;
     }
+    Matrix operator *(ComplexNum scalar) {
+        Matrix matrixToReturn(this->numRows, this->numCols);
+        for (int i = 0; i < this->numRows; i++) {
+            for (int j = 0; j < this->numCols; j++) {
+                matrixToReturn.entryData[i][j] = this->entryData[i][j] * scalar;
+            }
+        }
+        return matrixToReturn;
+    }
     Matrix operator *(double numToMul) const {
         Matrix matrixToReturn(this->numRows, this->numRows);
         for (int i = 0; i < numRows; i++) {
-            for (int j = 0; i < numCols; j++) {
+            for (int j = 0; j < numCols; j++) {
                 matrixToReturn.entryData[i][j] = this->entryData[i][j] * numToMul;
             }
         }
@@ -196,7 +205,7 @@ public:
 
         Matrix matrixToReturn(matrixToSub.numRows, matrixToSub.numCols);
         for (int i = 0; i < numRows; i++) {
-            for (int j = 0; i < numCols; j++) {
+            for (int j = 0; j < numCols; j++) {
                 matrixToReturn.entryData[i][j] = this->entryData[i][j] - matrixToSub.entryData[i][j];
             }
         }
@@ -210,7 +219,7 @@ public:
         }
 
         for (int i = 0; i < numRows; i++) {
-            for (int j = 0; i < numCols; j++) {
+            for (int j = 0; j < numCols; j++) {
                 this->entryData[i][j] = matrixToCopy.entryData[i][j];
             }
         }
@@ -240,7 +249,7 @@ public:
     }
 
     // Column access operator
-    Matrix operator[](int n) { // Honestly don't know which operator to use for this tried to make as intuitive as possible
+    Matrix operator[](int n) const { // Honestly don't know which operator to use for this tried to make as intuitive as possible
 
         if (this->numCols <= n || n < 0) {
             throw std::invalid_argument("Index out of bounds");
@@ -270,7 +279,7 @@ public:
         }
 
         for(int i = 0; i < numRows; i++) {
-            this->entryData[i][n] = (*M)(0,n);
+            this->entryData[i][n] = (*M)(n,0);
         }
     }
 
@@ -350,7 +359,7 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
     ComplexNum result(0, 0);
     for (int i = 0; i < u.numRows; i++) {
         ComplexNum vEntryConjugate = complexConjugate(v(i, 0));
-        result = result + (u(i, 0) * vEntryConjugate);
+        result += (u(i, 0) * vEntryConjugate);
     }
     return result;
 }
@@ -358,37 +367,38 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
 
 //improve once vector class is made will make all this stuff way smaller
 
-/*
-Matrix GramSchmidt(Matrix* M) { // todo refactor taking into account zero-based indexing of () operator
-    Matrix result(M->numRows,M->numCols);
 
-    for(int i = 1; i <= M->numCols; i++) {
-        std::vector<ComplexNum> Vk = M->operator[](i);
-        std::vector<ComplexNum> Uk = Vk;
+Matrix GramSchmidt(Matrix const& M) {
+    Matrix result(M.numRows,M.numCols);
 
-        for(int j = 1; j < i; j++) {
+    for(int i = 0; i < M.numCols; i++) {
+        Matrix Vk = M[i];
+        Matrix Uk = Vk;
+        for(int j = 0; j < i; j++) {
 
-            std::vector<ComplexNum> Un = result[j];
-            ComplexNum VdotU = InnerProduct(&Vk,&(Un));
-            ComplexNum UdotU = InnerProduct(&(Un),&(Un));
+            Matrix Un = result[j];
+            ComplexNum VdotU = InnerProduct(Vk,Un);
+            ComplexNum UdotU = InnerProduct(Un,Un);
 
-            //can make this read better with our own vector class functions for scalar multiplication
+            //compute the projection
             ComplexNum quotient = (VdotU / UdotU);
-            std::vector<ComplexNum> projection = Un;
-            for(int k = 0; k < projection.size(); k++) {
-                projection[k] = projection[k] * quotient;
-            }
 
-            for(int k = 0; k < projection.size(); k++) {
-                Uk[k] = Uk[k] - projection[k];
-            }
+            //bad line
+
+            Un = Un * quotient;
+
+
+            Uk = Uk - Un;
+
         }
 
+
         result.columnAssign(i,&Uk);
+        std::cout << "here";
     }
     return result;
 }
- */
+
 
 int main() {
     // Complex number test asserts
@@ -429,14 +439,13 @@ int main() {
 
 
     // Gram-Schmidt test asserts
-    /*
     Matrix D(2,2);
     D(0, 0) = 5;
     D(0,1) = 1;
     D(1,0) = 1;
     D(1, 1) = 6;
-    auto G = GramSchmidt(&D);
-     */
+    auto G = GramSchmidt(D);
+
 
 
 
