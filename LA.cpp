@@ -92,7 +92,6 @@ public:
         double b = ((this->imagPart * numToDiv.realPart) - (this->realPart * numToDiv.imagPart)) / a2SquaredPlusb2Squared;
         return ComplexNum(a,b);
     }
-    // todo(?) division of two complex numbers
 
 
     friend ComplexNum operator+(double lhs, const ComplexNum& rhs);
@@ -257,12 +256,21 @@ public:
     //column assign function
     void columnAssign(int n, std::vector<ComplexNum>* column) {
         if (this->numRows  != column->size()) {
-            throw std::invalid_argument("Invalid dimensions");
+            throw std::invalid_argument("Invalid column dimensions");
         }
 
+        for(int i = 0; i < this->numRows; i++) {
+            this->entryData[i][n] = (*column)[i];
+        }
+    }
+
+    void columnAssign(int n, Matrix* M) {
+        if(M->numCols > 1 || this->numRows < M->numRows) {
+            throw std::invalid_argument("Invalid column dimensions");
+        }
 
         for(int i = 0; i < numRows; i++) {
-            this->entryData[i][n-1] = (*column)[i];
+            this->entryData[i][n] = (*M)(0,n);
         }
     }
 
