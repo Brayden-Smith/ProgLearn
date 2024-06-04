@@ -9,6 +9,8 @@
 
 // Classes
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Waddress-of-temporary"
 class ComplexNum {
 public:
     // Constructor
@@ -27,6 +29,12 @@ public:
         this->complexPart = 0;
         return *this;
     }
+    ComplexNum& operator+=(ComplexNum const& numToAdd) {
+        this->realPart += numToAdd.realPart;
+        this->complexPart += numToAdd.complexPart;
+        return *this;
+    }
+
     bool operator==(const ComplexNum& otherNum) const {
         return (this->realPart == otherNum.realPart && this->complexPart == otherNum.complexPart);
     }
@@ -74,6 +82,12 @@ public:
 
     ComplexNum operator/(double numToDiv) const {
         return ComplexNum(this->realPart / numToDiv, this->complexPart / numToDiv);
+    }
+    ComplexNum operator/(ComplexNum const& numToDiv) {
+        double a2SquaredPlusb2Squared = (numToDiv.realPart * numToDiv.realPart) + (numToDiv.complexPart * numToDiv.complexPart);
+        double a = (((this->realPart * numToDiv.realPart) + (this->complexPart * numToDiv.complexPart)) / a2SquaredPlusb2Squared);
+        double b = ((this->complexPart * numToDiv.realPart) - (this->realPart * numToDiv.complexPart)) / a2SquaredPlusb2Squared;
+        return ComplexNum(a,b);
     }
     // todo(?) division of two complex numbers
 
@@ -193,11 +207,38 @@ public:
 
     // Entry access operator
 
-    ComplexNum& operator ()(int i, int j) { // Matrix access is one-indexed for more intuitive use. Feel free to change in a future commit if this proves annoying for QR decomp
+    ComplexNum& operator ()(int i, int j) { // Matrix access is one-indexed for more intuitive use. Feel free to change in a future commit if this proves annoying for QR decomposition
         if (this->numRows < i - 1 || this->numCols < j - 1 || i < 1 || j < 1) {
-            throw std::invalid_argument("Index out of bounds");
+            throw std::invalid_argument("Entry index out of bounds");
         }
         return this->entryData[i - 1][j - 1];
+    }
+
+    //column access operator
+    std::vector<ComplexNum> operator[](int n) { //Honestly don't know which operator to use for this tried to make as intuitive as possible
+
+        if (this->numCols < n || n < 1) {
+            throw std::invalid_argument("Index out of bounds");
+        }
+
+        std::vector<ComplexNum> result;
+
+        for(int i = 1; i <= this->numRows; i++) {
+            result.push_back(this->operator()(i,n));
+        }
+        return result;
+    }
+
+    //column assign function
+    void columnAssign(int n, std::vector<ComplexNum>* column) {
+        if (this->numRows  != column->size()) {
+            throw std::invalid_argument("Invalid dimensions");
+        }
+
+
+        for(int i = 0; i < numRows; i++) {
+            this->entryData[i][n-1] = (*column)[i];
+        }
     }
 
 
@@ -235,6 +276,52 @@ Matrix matMul(Matrix const& lhs, Matrix const& rhs) {
     return product;
 } // Slow, but functional
 
+ComplexNum InnerProduct(std::vector<ComplexNum>* u, std::vector<ComplexNum>* v) {
+    if (u->size() != v->size()) {
+        throw std::invalid_argument("Invalid Dimensions");
+    }
+
+    ComplexNum result(0.0,0.0);
+    for(int i = 0; i < u->size(); i++) {
+        result += (*u)[i] * (*v)[i];
+    }
+    return result;
+}
+
+//improve once vector class is made will make all this stuff way smaller
+
+Matrix GramSchmidt(Matrix* M) {
+    Matrix result(M->numRows,M->numCols);
+
+    for(int i = 1; i <= M->numCols; i++) {
+        std::vector<ComplexNum> Vk = M->operator[](i);
+        std::vector<ComplexNum> Uk = Vk;
+
+        for(int j = 1; j < i; j++) {
+
+            std::vector<ComplexNum> Un = result[j];
+            ComplexNum VdotU = InnerProduct(&Vk,&(Un));
+            ComplexNum UdotU = InnerProduct(&(Un),&(Un));
+
+            //can make this read better with our own vector class functions for scalar multiplication
+            ComplexNum quotient = (VdotU / UdotU);
+            std::vector<ComplexNum> projection = Un;
+            for(int k = 0; k < projection.size(); k++) {
+                projection[k] = projection[k] * quotient;
+            }
+
+            for(int k = 0; k < projection.size(); k++) {
+                Uk[k] = Uk[k] - projection[k];
+            }
+        }
+
+        result.columnAssign(i,&Uk);
+        std::cout << "here";
+    }
+    std::cout << "here";
+    return result;
+}
+
 int main() {
     // Complex number test asserts
     ComplexNum z(3, 2);
@@ -249,6 +336,8 @@ int main() {
     assert((z*w).complexPart == 13);
     assert((z*w).realPart == 0);
 
+
+
     // Matrix test asserts
     Matrix A(2, 2);
     A(1,2) = ComplexNum(1, 0);
@@ -259,16 +348,17 @@ int main() {
     assert(C(1, 2) == ComplexNum(4, 4));
 
     Matrix D(2,2);
-    D(1, 1) = 1;
-    D(2, 2) = 1;
-    Matrix E(2,2);
-    E(1, 1) = 1;
-    E(2,2) = 1;
-    Matrix F = matMul(D, E);
-    assert(F(1,1) == ComplexNum(1, 0));
-    assert(F(2,1) == ComplexNum(0, 0));
-    assert(F(1,2) == ComplexNum(0, 0));
-    assert(F(2,2) == ComplexNum(1, 0));
+    D(1, 1) = 5;
+    D(1,2) = 1;
+    D(2,1) = 1;
+    D(2, 2) = 6;
+    auto G = GramSchmidt(&D);
+    std::cout << "dnak";
+
+
+
+
 
 
 };
+#pragma clang diagnostic pop
