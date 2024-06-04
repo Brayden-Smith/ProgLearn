@@ -243,7 +243,7 @@ public:
     // Column access operator
     Matrix operator[](int n) { // Honestly don't know which operator to use for this tried to make as intuitive as possible
 
-        if (this->numCols < n || n < 1) {
+        if (this->numCols <= n || n < 0) {
             throw std::invalid_argument("Index out of bounds");
         }
 
