@@ -1,6 +1,9 @@
 #include <iostream>
-#import "matrix.h"
-#import <assert.h>
+#include "Matrix.h"
+#include <assert.h>
+#include "LA.h"
+#include "ComplexNum.h"
+
 int main() {
     // Complex number test asserts
     ComplexNum z(3, 2);
@@ -24,7 +27,7 @@ int main() {
     Matrix C = A + B;
     assert(C(0, 1) == ComplexNum(4, 4));
 
-    Matrix CTranspose = conjTranspose(C);
+    Matrix CTranspose = conjTranspose(&C);
     assert(CTranspose(1, 0) == ComplexNum(4, -4));
     assert(CTranspose(0, 1) == ComplexNum(0, 0));
 
@@ -35,7 +38,7 @@ int main() {
     matrixToNorm(0, 1) = 1;
     matrixToNorm(1, 1) = ComplexNum(0, 2);
     matrixToNorm(2, 1) = 1;
-    std::cout << "Frobenius norm: " << frobeniusNorm(matrixToNorm) << std::endl;
+    std::cout << "Frobenius norm: " << frobeniusNorm(&matrixToNorm) << std::endl;
 
 
 

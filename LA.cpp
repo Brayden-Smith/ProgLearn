@@ -45,11 +45,11 @@ Matrix conjTranspose(Matrix* matrixToTranspose) {
     return matrixToReturn;
 }
 
-double frobeniusNorm(Matrix const& matrixToNorm) {
+double frobeniusNorm(Matrix* matrixToNorm) {
     Matrix conjugateTransposeMatrix = conjTranspose(matrixToNorm);
-    Matrix matrixStarMatrix = matMul(conjugateTransposeMatrix, matrixToNorm);
+    Matrix matrixStarMatrix = matMul(&conjugateTransposeMatrix, matrixToNorm);
     //std::cout << "Matrix mul has dimensions " << matrixStarMatrix.numRows << "x" << matrixStarMatrix.numCols << std::endl;
-    double trace = realTraceOfMatrix(matrixStarMatrix);
+    double trace = realTraceOfMatrix(&matrixStarMatrix);
     return sqrt(trace);
 }
 

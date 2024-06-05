@@ -1,4 +1,4 @@
-#import "ComplexNum.h"
+#include "ComplexNum.h"
 
 
 // Constructor
@@ -62,6 +62,7 @@ ComplexNum ComplexNum::operator*(ComplexNum const& numToMul) const {
 
     return {(a * c) - (b * d), (a * d) + (b * c)};
 }
+
 ComplexNum ComplexNum::operator*(double numToMul) const {
     return {numToMul * this->realPart, numToMul * this->imagPart};
 }
