@@ -383,13 +383,14 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
 void normalizeVectorsInMatrix(Matrix* pointerToMatrix) {
     for (int i = 0; i < pointerToMatrix->numCols; i++) {
 
-        ComplexNum sumToNorm(0, 0);
+        double sumToNorm = 0;
         for (int j = 0; j < pointerToMatrix->numRows; j++) {
-            sumToNorm += pointerToMatrix->entryData[j][i];
+            double magnitude = magnitudeOfNumber(pointerToMatrix->entryData[j][i]);
+            sumToNorm += (magnitude * magnitude);
         }
 
-        double magnitude = magnitudeOfNumber(sumToNorm);
-        double oneOverMagnitude = 1/magnitude;
+        double VecMagnitude = sqrt(sumToNorm);
+        double oneOverMagnitude = 1/VecMagnitude;
         for (int j = 0; j < pointerToMatrix->numRows; j++) {
             pointerToMatrix->entryData[j][i] = pointerToMatrix->entryData[j][i] * oneOverMagnitude;
         }
