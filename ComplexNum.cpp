@@ -84,6 +84,29 @@ ComplexNum ComplexNum::operator/(ComplexNum const& numToDiv) const {
     return {a,b};
 }
 
+std::ostream& operator<<(std::ostream& outputStream, const ComplexNum& numberToPrint) {
+    double rp = numberToPrint.getRealPart();
+    double ip = numberToPrint.getImagPart();
+
+    if (rp != 0) {
+        outputStream << rp;
+    }
+    if (ip != 0) {
+        if (ip > 0 && rp != 0) {
+            outputStream << "+";
+        }
+        if (ip < 0) {
+            outputStream << "-";
+            ip = -ip; // Make imaginary part positive for output
+        }
+        outputStream << ip << 'i';
+    }
+    if (rp == 0 && ip == 0) {
+        outputStream << "0";
+    }
+    return outputStream;
+}
+
 //Accessors
 double ComplexNum::getRealPart() const {
     return this->realPart;

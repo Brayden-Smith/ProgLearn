@@ -1,6 +1,7 @@
 #pragma once
-#import <math.h>
-#import <stdexcept>
+#include <math.h>
+#include <stdexcept>
+#include <iostream>
 
 class ComplexNum {
 private:
@@ -44,6 +45,8 @@ public:
     //Methods
     double getMagnitude() const;
     ComplexNum getConjugate() const;
+
+    friend std::ostream& operator<<(std::ostream& outputStream, const ComplexNum& numberToPrint);
 
 };
 

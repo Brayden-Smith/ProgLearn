@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include <iostream>
 
 Matrix::Matrix(int nr, int nc) : numRows(nr), numCols(nc), entryData(nr, std::vector<ComplexNum>(nc)) {
     if (nr <= 0 || nc <= 0) {
@@ -155,3 +156,20 @@ Matrix operator*(double lhs, const Matrix &rhs) {
     }
     return matrixToReturn;
 }
+
+
+std::ostream &operator<<(std::ostream &outputStream, const Matrix& matrixToPrint) {
+    for (int i = 0; i < matrixToPrint.numRows; i++) {
+        outputStream << "| ";
+        outputStream << matrixToPrint.entryData[i][0];
+        for (int j  = 1; j < matrixToPrint.numCols - 1; j++) {
+            outputStream << " " << matrixToPrint.entryData[i][j] << " ";
+        }
+        if (matrixToPrint.numCols > 1) {
+            outputStream << matrixToPrint.entryData[i][matrixToPrint.numCols - 1];
+        }
+        outputStream << " |\n";
+    }
+    return outputStream;
+}
+

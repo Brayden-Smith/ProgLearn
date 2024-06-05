@@ -1,6 +1,7 @@
 #pragma once
 #import "ComplexNum.h"
 #include <vector>
+#import <iostream>
 
 class Matrix  {
 private:
@@ -41,6 +42,9 @@ public:
     //Accessor methods
     double getNumRows() const;
     double getNumCols() const;
+
+    friend std::ostream& operator<<(std::ostream& outputStream, const Matrix& matrixToPrint);
+
 };
 
 Matrix operator*(double lhs, const Matrix &rhs);

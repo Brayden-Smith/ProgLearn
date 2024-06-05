@@ -53,5 +53,6 @@ int main() {
     D(2,2) = 1;
     auto meme = D[1];
     auto G = GramSchmidt(D);
-    std::cout << "here";
+    std::cout << ComplexNum(-4, -4) << std::endl;
+    std::cout << D << std::endl;
 }
