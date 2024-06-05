@@ -35,7 +35,7 @@ int main() {
     matrixToNorm(0, 1) = 1;
     matrixToNorm(1, 1) = ComplexNum(0, 2);
     matrixToNorm(2, 1) = 1;
-    std::cout << frobeniusNorm(matrixToNorm) << std::endl;
+    std::cout << "Frobenius norm: " << frobeniusNorm(matrixToNorm) << std::endl;
 
 
 

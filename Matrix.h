@@ -9,7 +9,7 @@ private:
     std::vector<std::vector<ComplexNum>> entryData;
 public:
     //Constructors
-    Matrix(int nr, int nc);
+    Matrix (int nr, int nc);
     Matrix(const Matrix& matToCopy);
 
     //Arithmetic operators
