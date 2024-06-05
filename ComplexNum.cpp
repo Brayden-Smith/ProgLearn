@@ -102,6 +102,9 @@ void ComplexNum::setImagPart(double value) {
 
 //Methods
 double ComplexNum::getMagnitude() const {
+    if (imagPart == 0) {
+        return abs(realPart);
+    }
     return sqrt((realPart * realPart) + (imagPart * imagPart));
 }
 ComplexNum ComplexNum::getConjugate() const {
