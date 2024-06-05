@@ -2,7 +2,7 @@
 #import "ComplexNum.h"
 #include <vector>
 
-class Matrix {
+class Matrix  {
 private:
     int numRows;
     int numCols;
