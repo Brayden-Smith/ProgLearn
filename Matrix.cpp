@@ -159,6 +159,7 @@ Matrix operator*(double lhs, const Matrix &rhs) {
 
 
 std::ostream &operator<<(std::ostream &outputStream, const Matrix& matrixToPrint) {
+
     for (int i = 0; i < matrixToPrint.numRows; i++) {
         outputStream << "| ";
         outputStream << matrixToPrint.entryData[i][0];
@@ -166,6 +167,9 @@ std::ostream &operator<<(std::ostream &outputStream, const Matrix& matrixToPrint
             outputStream << " " << matrixToPrint.entryData[i][j] << " ";
         }
         if (matrixToPrint.numCols > 1) {
+            if (matrixToPrint.numCols == 2) {
+                outputStream << ' ';
+            }
             outputStream << matrixToPrint.entryData[i][matrixToPrint.numCols - 1];
         }
         outputStream << " |\n";
