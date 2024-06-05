@@ -8,7 +8,7 @@ ComplexNum::ComplexNum(double a, double b) : realPart(a), imagPart(b) {}
 ComplexNum& ComplexNum::operator=(ComplexNum const& numToCopy) {
     if (this != &numToCopy) {
         this->realPart = numToCopy.realPart;
-        this->imagPart = numToCopy.imagPart;
+        this->imagPart =  numToCopy.imagPart;
     }
     return *this;
 }

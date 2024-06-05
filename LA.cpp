@@ -415,7 +415,7 @@ Matrix GramSchmidt(Matrix const& M) {
             Un = Un * quotient;
             Uk = Uk - Un;
         }
-        result.columnAssign(i,&Uk);
+        result.columnAssign(i ,&Uk);
     }
 
     normalizeVectorsInMatrix(&result);

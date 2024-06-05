@@ -157,7 +157,7 @@ Matrix operator*(double lhs, const Matrix &rhs) {
 }
 Matrix matMul(Matrix* lhs, Matrix* rhs) {
     if (lhs->getNumCols() != rhs->getNumRows()) {
-        throw std::invalid_argument("Invalid matrix dimensions");
+        throw std::invalid_argument("Invalid matrix  dimensions");
     }
 
     Matrix product(lhs->getNumRows(), rhs->getNumCols());

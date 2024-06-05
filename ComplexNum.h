@@ -9,7 +9,7 @@ private:
     double imagPart;
 public:
     //Constructor
-    ComplexNum(double a = 0, double b= 0);
+    ComplexNum (double a = 0, double b= 0);
 
     //Equality operators
     ComplexNum& operator=(ComplexNum const& numToCopy);
