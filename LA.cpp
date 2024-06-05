@@ -7,10 +7,24 @@
 #include <stdexcept>
 
 
-// Classes
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Waddress-of-temporary"
+
+
+
+
+
+
+
+
+// BASIC MATRIX AND VECTOR FUNCTIONALITIES
+// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
+
+
+
+
 class ComplexNum {
 public:
     // Constructor
@@ -402,9 +416,30 @@ Matrix GramSchmidt(Matrix const& M) {
         }
         result.columnAssign(i,&Uk);
     }
+
     normalizeVectorsInMatrix(&result);
     return result;
 }
+
+
+
+
+
+
+
+// MATRIX DECOMPOSITIONS AND EIGENVALUES
+// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
+
+
+// QR
+
+// Eigenvalues
+
+// SVD
+
+
+
 
 
 int main() {
