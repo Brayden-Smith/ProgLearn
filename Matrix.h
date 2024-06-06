@@ -40,8 +40,8 @@ public:
     Matrix rowAssign(int n, Matrix* M);
 
     //Accessor methods
-    double getNumRows() const;
-    double getNumCols() const;
+    int getNumRows() const;
+    int getNumCols() const;
 
     friend std::ostream& operator<<(std::ostream& outputStream, const Matrix& matrixToPrint);
 

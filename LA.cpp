@@ -109,3 +109,61 @@ Matrix GramSchmidt(Matrix const& M) {
     normalizeVectorsInMatrix(&result);
     return result;
 }
+
+void swapRowsInMatrix(Matrix* matrixToSwap, int posRowOne, int posRowTwo) {
+
+    Matrix temp(1, matrixToSwap->getNumCols());
+    for (int i = 0; i < matrixToSwap->getNumCols(); i++) {
+        temp(0, i) = (*matrixToSwap)(posRowOne, i);
+    }
+
+    for (int i = 0; i < matrixToSwap->getNumCols(); i++) {
+        (*matrixToSwap)(posRowOne, i) = (*matrixToSwap)(posRowTwo, i);
+    }
+
+    for (int i = 0; i < matrixToSwap->getNumCols(); i++) {
+        (*matrixToSwap)(posRowTwo, i) = temp(0, i);
+    }
+}
+
+Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB) {
+    if (matrixA->getNumRows() != matrixB->getNumRows()) {
+        throw std::invalid_argument("Matrices must have same number of rows");
+    }
+    Matrix matrixToReturn(matrixA->getNumRows(), matrixA->getNumCols() + matrixB->getNumCols());
+
+    for (int i = 0; i < matrixA->getNumRows(); i++) {
+        for (int j = 0; j < matrixA->getNumCols(); j++) {
+            matrixToReturn(i, j) = (*matrixA)(i, j);
+        }
+        for (int j = 0; j < matrixB->getNumCols(); j++) {
+            matrixToReturn(i, j + matrixA->getNumCols()) = (*matrixB)(i, j);
+        }
+    }
+    return matrixToReturn;
+}
+
+// Row reduction to check for linear independence will be a separate method called "row reduction"
+Matrix gaussianElimination(Matrix* augmentedMatrix, Matrix* vector) {
+    if (augmentedMatrix->getNumRows() != augmentedMatrix->getNumCols() + 1) {
+        throw std::invalid_argument("Augmented matrix must be of size n x n+1");
+    }
+    // Forward elimination
+    for (int i = 0; i < augmentedMatrix->getNumCols() - 2; i++) {
+        // Get largest element in column for numerical stability
+
+
+
+
+    }
+
+    // Ensure diagonal entries are non-zero
+
+    // Back substitution
+
+    //
+}
+
+
+
+

@@ -140,10 +140,10 @@ Matrix Matrix::rowAssign(int n, Matrix* M) {
 }
 
 //Accessor methods
-double Matrix::getNumRows() const{
+int Matrix::getNumRows() const{
     return this->numRows;
 }
-double Matrix::getNumCols() const {
+int Matrix::getNumCols() const {
     return this->numCols;
 }
 
