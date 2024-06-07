@@ -192,7 +192,6 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
 
     }
 
-    std::cout << "here?" << std::endl;
     // Execute the same procedure now considering the entries above the diagonal (this can be replaced with straight back substitution in the future)
     for (int i = 0; i < augmentedMatrix->getNumCols() - 1; i++) {
         // Get the largest element in column and swap rows for numerical stability
@@ -220,7 +219,6 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
     std::cout << augmentedMatrixPrePointer << std::endl;
     for (int j = 0; j < augmentedMatrix->getNumRows(); j++) {
         ComplexNum reciprocal = ComplexNum(1, 0) / (*augmentedMatrix)(j,j);
-        std::cout << "reciprocal: " << reciprocal << std::endl;
         for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
             (*augmentedMatrix)(j,k) = (*augmentedMatrix)(j,k) * reciprocal;
         }
@@ -232,6 +230,18 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
     }
 
     return vectorToReturn;
+}
+
+Matrix inverseMatrix(Matrix* matrixToInvert) {
+    if (matrixToInvert->getNumRows() != matrixToInvert->getNumCols()) {
+        throw std::invalid_argument("Matrix must be n x n!");
+    }
+
+    for (int i = 0; i < matrixToInvert->getNumRows(); i++) {
+
+    }
+
+
 }
 
 

@@ -11,3 +11,4 @@ Matrix GramSchmidt(Matrix const& M);
 Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB);
 void swapRowsInMatrix(Matrix* matrixToSwap, int posRowOne, int posRowTwo);
 Matrix gaussianElimination(Matrix* matrix, Matrix* vector);
+Matrix inverseMatrix(Matrix* matrixToInvert);
