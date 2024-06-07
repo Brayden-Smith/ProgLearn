@@ -242,7 +242,6 @@ Matrix inverseMatrix(Matrix* matrixToInvert) {
         Matrix unitVector(matrixToInvert->getNumRows(), 1);
         unitVector(i, 0) = 1;
         Matrix resultVector = gaussianElimination(matrixToInvert, &unitVector);
-        std::cout << resultVector << std::endl;
 
         for (int j = 0; j < matrixToInvert->getNumRows(); j++) {
             outputMatrix(j, i) = resultVector(j , 0);
