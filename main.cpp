@@ -61,6 +61,6 @@ int main() {
 
     Matrix inverse = inverseMatrix(&D);
     Matrix identity = matMul(&inverse, &D);
-    std::cout << "inverse is " << inverse << std::endl;
+    std::cout << "inverse is\n" << inverse << std::endl;
     std::cout << "Result of matmul with matrix and its inverse is\n" << identity << std::endl;
 }

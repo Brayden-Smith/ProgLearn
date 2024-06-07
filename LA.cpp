@@ -232,7 +232,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
     return vectorToReturn;
 }
 
-Matrix inverseMatrix(Matrix* matrixToInvert) {
+Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That being said, we can speed this up in the future if needed, but at the moment I want "easy" code for debugging
     if (matrixToInvert->getNumRows() != matrixToInvert->getNumCols()) {
         throw std::invalid_argument("Matrix must be n x n!");
     }
