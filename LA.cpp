@@ -144,24 +144,94 @@ Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB) {
 }
 
 // Row reduction to check for linear independence will be a separate method called "row reduction"
-Matrix gaussianElimination(Matrix* augmentedMatrix, Matrix* vector) {
-    if (augmentedMatrix->getNumRows() != augmentedMatrix->getNumCols() + 1) {
+// Will return a vector later
+Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
+
+    Matrix augmentedMatrixPrePointer = createAugmentedMatrix(matrix, vector); // Temporary fix
+    Matrix* augmentedMatrix = &augmentedMatrixPrePointer;
+
+    if (augmentedMatrix->getNumRows() + 1 != augmentedMatrix->getNumCols()) {
         throw std::invalid_argument("Augmented matrix must be of size n x n+1");
     }
     // Forward elimination
     for (int i = 0; i < augmentedMatrix->getNumCols() - 2; i++) {
-        // Get largest element in column for numerical stability
+        // Get the largest element in column and swap rows for numerical stability
 
+        ComplexNum maxElementInColumn(0,0);
+        int maxElementInColumnRowPos = i;
+        for (int j = i; j < augmentedMatrix->getNumRows(); j++) {
+            if (magnitudeOfNumber((*augmentedMatrix)(j, i)) > magnitudeOfNumber(maxElementInColumn)) {
+                maxElementInColumnRowPos = j;
+                maxElementInColumn = (*augmentedMatrix)(j, i);
+            }
+        }
+        if (magnitudeOfNumber(maxElementInColumn) < 1e-6) {
+            throw std::invalid_argument("No non-zero element in column");
+        }
 
+        if (maxElementInColumnRowPos != i) {
+            swapRowsInMatrix(augmentedMatrix, i, maxElementInColumnRowPos);
+        }
 
+        //std::cout << "LARGEST ELEMENT IN COLUMN IS " << maxElementInColumn << std::endl;
+
+        // Use operations to ensure the column is consistent with a matrix in REF
+
+        for (int j = i + 1; j < augmentedMatrix->getNumRows(); j++) {
+            // Add multiples of j = i to each row from i + 1 to the end of column to get zeros
+            ComplexNum scalarMultipleForRowi = ((*augmentedMatrix)(j, i))/(*augmentedMatrix)(i, i);
+            scalarMultipleForRowi = scalarMultipleForRowi * -1;
+
+            //std::cout << "scalar multiple for row " << i + 1 << " is " << scalarMultipleForRowi << std::endl;
+
+            for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
+                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(j - 1, k) * scalarMultipleForRowi);
+            }
+
+        }
 
     }
 
-    // Ensure diagonal entries are non-zero
+    std::cout << "here?" << std::endl;
+    // Execute the same procedure now considering the entries above the diagonal (this can be replaced with straight back substitution in the future)
+    for (int i = 0; i < augmentedMatrix->getNumCols() - 1; i++) {
+        // Get the largest element in column and swap rows for numerical stability
+        if (magnitudeOfNumber((*augmentedMatrix)(i, i)) < 1e-6) {
+            throw std::invalid_argument("Matrix is singular!");
+        }
+        //std::cout << "here?" << std::endl;
 
-    // Back substitution
+        for (int j = i - 1; j >= 0; j--) {
 
-    //
+            // Add multiples of j = i to each row from i + 1 to the end of column to get zeros
+            ComplexNum scalarMultipleForRowi = ((*augmentedMatrix)(j, i))/(*augmentedMatrix)(i, i);
+            scalarMultipleForRowi = scalarMultipleForRowi * -1;
+
+            //std::cout << "scalar multiple for row " << i + 1 << " is " << scalarMultipleForRowi << std::endl;
+
+            for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
+                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(j + 1, k) * scalarMultipleForRowi);
+            }
+
+        }
+
+    }
+
+    std::cout << augmentedMatrixPrePointer << std::endl;
+    for (int j = 0; j < augmentedMatrix->getNumRows(); j++) {
+        ComplexNum reciprocal = ComplexNum(1, 0) / (*augmentedMatrix)(j,j);
+        std::cout << "reciprocal: " << reciprocal << std::endl;
+        for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
+            (*augmentedMatrix)(j,k) = (*augmentedMatrix)(j,k) * reciprocal;
+        }
+    }
+
+    Matrix vectorToReturn(vector->getNumRows(), vector->getNumCols());
+    for (int j = 0; j < vector->getNumRows(); j++) {
+        vectorToReturn(j, 0) = (*augmentedMatrix)(j, augmentedMatrix->getNumCols() - 1);
+    }
+
+    return vectorToReturn;
 }
 
 
