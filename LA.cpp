@@ -216,7 +216,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
 
     }
 
-    std::cout << augmentedMatrixPrePointer << std::endl;
+    //std::cout << augmentedMatrixPrePointer << std::endl;
     for (int j = 0; j < augmentedMatrix->getNumRows(); j++) {
         ComplexNum reciprocal = ComplexNum(1, 0) / (*augmentedMatrix)(j,j);
         for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
@@ -237,11 +237,18 @@ Matrix inverseMatrix(Matrix* matrixToInvert) {
         throw std::invalid_argument("Matrix must be n x n!");
     }
 
+    Matrix outputMatrix(matrixToInvert->getNumRows(), matrixToInvert->getNumCols());
     for (int i = 0; i < matrixToInvert->getNumRows(); i++) {
+        Matrix unitVector(matrixToInvert->getNumRows(), 1);
+        unitVector(i, 0) = 1;
+        Matrix resultVector = gaussianElimination(matrixToInvert, &unitVector);
+        std::cout << resultVector << std::endl;
 
+        for (int j = 0; j < matrixToInvert->getNumRows(); j++) {
+            outputMatrix(j, i) = resultVector(j , 0);
+        }
     }
-
-
+    return outputMatrix;
 }
 
 

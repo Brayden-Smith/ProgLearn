@@ -55,22 +55,12 @@ int main() {
     auto G = GramSchmidt(D);
     //std::cout << ComplexNum(-4, -4) << std::endl;
 
-    //std::cout << D << std::endl;
-    swapRowsInMatrix(&D, 0, 1);
-    //std::cout << D << std::endl;
-    //std::cout << G << std::endl;
 
-    //Matrix E = createAugmentedMatrix(&D, &G);
-    //std::cout << E << std::endl;
     Matrix T(3, 1);
     T(0, 0) = 1;
-    Matrix Y = createAugmentedMatrix(&D, &T);
-    std::cout << Y << std::endl;
 
-    Matrix Q = gaussianElimination(&D, &T);
-
-    std::cout << Q << std::endl;
-
-    Matrix res = matMul(&D, &Q);
-    std::cout << res << std::endl;
+    Matrix inverse = inverseMatrix(&D);
+    Matrix identity = matMul(&inverse, &D);
+    std::cout << "inverse is " << inverse << std::endl;
+    std::cout << "Result of matmul with matrix and its inverse is\n" << identity << std::endl;
 }
