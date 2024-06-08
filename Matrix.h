@@ -14,8 +14,8 @@ public:
     Matrix(const Matrix& matToCopy);
 
     //Arithmetic operators
-    Matrix operator +(Matrix const& matrixToAdd) const;
-    Matrix operator *(ComplexNum const& scalar);
+    Matrix operator + (Matrix const& matrixToAdd) const;
+    Matrix operator * (ComplexNum const& scalar);
     Matrix operator *(double numToMul) const;
     friend Matrix operator*(double lhs, const Matrix& rhs);
     Matrix operator -(Matrix const& matrixToSub) const;

@@ -26,7 +26,7 @@ public:
 
     //Arithmetic operators
     ComplexNum operator+(ComplexNum const& numToAdd) const;
-    ComplexNum operator+(double numToAdd) const;
+    ComplexNum operator+ (double numToAdd) const;
     ComplexNum operator*(ComplexNum const& numToMul) const;
     ComplexNum operator*(double numToMul) const;
     ComplexNum operator-(ComplexNum const& numToSub) const;

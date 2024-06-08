@@ -131,7 +131,7 @@ Matrix Matrix::operator()(int n) const {
 //Row mutator
 Matrix Matrix::rowAssign(int n, Matrix* M) {
     if(M->numRows > 1 || this->numCols < M->numCols) {
-        throw std::invalid_argument("Invalid dimensions");
+        throw std::invalid_argument("Invalid dimensions ");
     }
 
     for(int i = 0; i < numCols; i++) {

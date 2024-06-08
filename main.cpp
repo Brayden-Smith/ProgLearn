@@ -9,7 +9,7 @@ int main() {
     // Complex number test asserts
     ComplexNum z(3, 2);
     assert(z.getConjugate().getImagPart() == -2 );
-    assert ((2 + z).getRealPart() == 5);
+    assert ((2+z).getRealPart() == 5);
     assert((z * -7).getImagPart() == -14);
     assert((2 * z).getRealPart() == 6);
     assert((z * 12).getRealPart() == 36);
