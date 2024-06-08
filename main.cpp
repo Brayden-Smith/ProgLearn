@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "LA.h"
 #include "ComplexNum.h"
+#include "Regression.h"
 
 int main() {
     // Complex number test asserts
@@ -55,12 +56,51 @@ int main() {
     auto G = GramSchmidt(D);
     //std::cout << ComplexNum(-4, -4) << std::endl;
 
+    Matrix matrixToInvert(3, 3);
+    matrixToInvert(0,0) = ComplexNum(2, 1);
+    matrixToInvert(1,0) = ComplexNum(4, 0);
+    matrixToInvert(2,0) = ComplexNum(1, 2);
+    matrixToInvert(0,1) = ComplexNum(1, -1);
+    matrixToInvert(1,1) = ComplexNum(-2, 2);
+    matrixToInvert(2,1) = ComplexNum(2, -1);
+    matrixToInvert(0,2) = ComplexNum(3, 0);
+    matrixToInvert(1,2) = ComplexNum(5, 0);
+    matrixToInvert(2,2) = ComplexNum(3, 1);
 
-    Matrix T(3, 1);
-    T(0, 0) = 1;
-
-    Matrix inverse = inverseMatrix(&D);
-    Matrix identity = matMul(&inverse, &D);
+    Matrix inverse = inverseMatrix(&matrixToInvert);
+    Matrix identity = matMul(&inverse, &matrixToInvert);
     std::cout << "inverse is\n" << inverse << std::endl;
     std::cout << "Result of matmul with matrix and its inverse is\n" << identity << std::endl;
+
+    Matrix xData(10, 1);
+    xData(0, 0) = 1;
+    xData(1, 0) = 2;
+    xData(2, 0) = 3;
+    xData(3, 0) = 4;
+    xData(4, 0) = 5;
+    xData(5, 0) = 6;
+    xData(6, 0) = 7;
+    xData(7, 0) = 8;
+    xData(8, 0) = 9;
+    xData(9, 0) = 10;
+
+    Matrix yData(10, 1);
+    yData(0, 0) = 2;
+    yData(1, 0) = 4;
+    yData(2, 0) = 5;
+    yData(3, 0) = 4;
+    yData(4, 0) = 5;
+    yData(5, 0) = 7;
+    yData(6, 0) = 8;
+    yData(7, 0) = 8;
+    yData(8, 0) = 10;
+    yData(9, 0) = 12;
+
+
+    LinearRegressor linreg1(&xData, &yData);
+    std::cout << "Error is: " << linreg1.getError() << std::endl;
+    Matrix testData(1, 1);
+    testData(0, 0) = 10;
+    ComplexNum prediction = linreg1.predict(&testData);
+    std::cout << "Prediction is " << prediction << std::endl;
 }

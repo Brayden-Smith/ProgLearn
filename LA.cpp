@@ -1,5 +1,20 @@
 #include "LA.h"
 
+void thresholdStabilize(Matrix* matrixToStabilize) {
+    for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
+        for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
+            if ((*matrixToStabilize)(i,j).getRealPart() < 1e-9) {
+                (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
+            }
+            if ((*matrixToStabilize)(i,j).getImagPart() < 1e-9) {
+                (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
+            }
+
+        }
+    }
+}
+
+
 
 Matrix matMul(Matrix* lhs, Matrix* rhs) {
     if (lhs->getNumCols() != rhs->getNumRows()) {
@@ -16,7 +31,7 @@ Matrix matMul(Matrix* lhs, Matrix* rhs) {
             product(i,j) = sum;
         }
     }
-
+    thresholdStabilize(&product);
     return product;
 }
 
@@ -39,6 +54,17 @@ Matrix conjTranspose(Matrix* matrixToTranspose) {
     for (int i = 0; i < matrixToTranspose->getNumRows(); i++) {
         for (int j = 0; j < matrixToTranspose->getNumCols(); j++) {
             ComplexNum transposedEntry = complexConjugate((*matrixToTranspose)(i,j));
+            matrixToReturn(j,i) = transposedEntry;
+        }
+    }
+    return matrixToReturn;
+}
+
+Matrix transpose(Matrix* matrixToTranspose) {
+    Matrix matrixToReturn(matrixToTranspose->getNumCols(), matrixToTranspose->getNumRows());
+    for (int i = 0; i < matrixToTranspose->getNumRows(); i++) {
+        for (int j = 0; j < matrixToTranspose->getNumCols(); j++) {
+            ComplexNum transposedEntry = (*matrixToTranspose)(i,j);
             matrixToReturn(j,i) = transposedEntry;
         }
     }
@@ -143,12 +169,14 @@ Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB) {
     return matrixToReturn;
 }
 
+
 // Row reduction to check for linear independence will be a separate method called "row reduction"
-// Will return a vector later
 Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
 
     Matrix augmentedMatrixPrePointer = createAugmentedMatrix(matrix, vector); // Temporary fix
     Matrix* augmentedMatrix = &augmentedMatrixPrePointer;
+
+    //std::cout << "Augmented matrix to perform row reduction on:\n" << augmentedMatrixPrePointer << std::endl;
 
     if (augmentedMatrix->getNumRows() + 1 != augmentedMatrix->getNumCols()) {
         throw std::invalid_argument("Augmented matrix must be of size n x n+1");
@@ -166,7 +194,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
             }
         }
         if (magnitudeOfNumber(maxElementInColumn) < 1e-6) {
-            throw std::invalid_argument("No non-zero element in column");
+            throw std::invalid_argument("Matrix is singular!");
         }
 
         if (maxElementInColumnRowPos != i) {
@@ -182,15 +210,20 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
             ComplexNum scalarMultipleForRowi = ((*augmentedMatrix)(j, i))/(*augmentedMatrix)(i, i);
             scalarMultipleForRowi = scalarMultipleForRowi * -1;
 
-            //std::cout << "scalar multiple for row " << i + 1 << " is " << scalarMultipleForRowi << std::endl;
+            //std::cout << augmentedMatrixPrePointer << std::endl;
+
+            //std::cout << "scalar multiple for row " << j << " is " << scalarMultipleForRowi << std::endl;
 
             for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
-                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(j - 1, k) * scalarMultipleForRowi);
+                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(i, k) * scalarMultipleForRowi);
+                //std::cout << (*augmentedMatrix)(j, k) << std::endl;
             }
+            //std::cout << augmentedMatrixPrePointer << std::endl;
 
         }
 
     }
+    //std::cout << "Upper triangular matrix is\n" << augmentedMatrixPrePointer << "\n" << std::endl;
 
     // Execute the same procedure now considering the entries above the diagonal (this can be replaced with straight back substitution in the future)
     for (int i = 0; i < augmentedMatrix->getNumCols() - 1; i++) {
@@ -209,7 +242,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
             //std::cout << "scalar multiple for row " << i + 1 << " is " << scalarMultipleForRowi << std::endl;
 
             for (int k = 0; k < augmentedMatrix->getNumCols(); k++) {
-                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(j + 1, k) * scalarMultipleForRowi);
+                (*augmentedMatrix)(j, k) = (*augmentedMatrix)(j, k) + ((*augmentedMatrix)(i, k) * scalarMultipleForRowi);
             }
 
         }
@@ -246,7 +279,9 @@ Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That bein
         for (int j = 0; j < matrixToInvert->getNumRows(); j++) {
             outputMatrix(j, i) = resultVector(j , 0);
         }
+        //std::cout << outputMatrix[i] << std::endl;
     }
+
     return outputMatrix;
 }
 
