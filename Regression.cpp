@@ -50,6 +50,9 @@ LinearRegressor::LinearRegressor(Matrix* xData, Matrix* yData) : numVars(xData->
 
     MSE = MSE/yData->getNumRows();
     m_error = MSE;
+    if (MSE < 1e-9) {
+        m_error = 0;
+    }
 }
 
 ComplexNum LinearRegressor::predict(Matrix* xData) {

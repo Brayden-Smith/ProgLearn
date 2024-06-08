@@ -85,6 +85,17 @@ int main() {
     xData(9, 0) = 10;
 
     Matrix yData(10, 1);
+    yData(0, 0) = 11;
+    yData(1, 0) = 12;
+    yData(2, 0) = 13;
+    yData(3, 0) = 14;
+    yData(4, 0) = 15;
+    yData(5, 0) = 16;
+    yData(6, 0) = 17;
+    yData(7, 0) = 18;
+    yData(8, 0) = 19;
+    yData(9, 0) = 20;
+    /*
     yData(0, 0) = 2;
     yData(1, 0) = 4;
     yData(2, 0) = 5;
@@ -95,12 +106,13 @@ int main() {
     yData(7, 0) = 8;
     yData(8, 0) = 10;
     yData(9, 0) = 12;
+     */
 
 
     LinearRegressor linreg1(&xData, &yData);
     std::cout << "Error is: " << linreg1.getError() << std::endl;
     Matrix testData(1, 1);
-    testData(0, 0) = 10;
+    testData(0, 0) = 15;
     ComplexNum prediction = linreg1.predict(&testData);
     std::cout << "Prediction is " << prediction << std::endl;
 }
