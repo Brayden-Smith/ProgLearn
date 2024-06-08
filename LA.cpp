@@ -3,10 +3,10 @@
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
         for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
-            if ((*matrixToStabilize)(i,j).getRealPart() < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-9) {
                 (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
             }
-            if ((*matrixToStabilize)(i,j).getImagPart() < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-9) {
                 (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
             }
 

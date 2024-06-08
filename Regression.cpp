@@ -18,12 +18,12 @@ Matrix ordinaryLeastSquaresCoefficients(Matrix* xData, Matrix* yData) { // XData
         columnOfOnes(i, 0) = 1;
     }
     Matrix xDataA = createAugmentedMatrix(&columnOfOnes, xData);
-    Matrix xDataAtrans = transpose(&xDataA);
-    Matrix* xDataAPointer = &xDataAtrans;
-
+    Matrix xDataACorrected = transpose(&xDataA);
+    Matrix* xDataAPointer = &xDataACorrected;
     Matrix xDataTranspose = conjTranspose(xDataAPointer);
     Matrix xDataXDataTranspose = matMul(xDataAPointer, &xDataTranspose);
     Matrix xDataXDataTransposeInverse = inverseMatrix(&xDataXDataTranspose);
+
     Matrix xDataY = matMul(xDataAPointer, yData);
     Matrix betaMinimizer = matMul(&xDataXDataTransposeInverse, &xDataY);
     return betaMinimizer;
@@ -69,4 +69,8 @@ ComplexNum LinearRegressor::predict(Matrix* xData) {
 
 double LinearRegressor::getError() {
     return this->m_error;
+}
+
+Matrix LinearRegressor::getRegressionCoefficients() {
+    return this->regressionCoefficients;
 }

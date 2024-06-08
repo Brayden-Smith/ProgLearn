@@ -72,29 +72,22 @@ int main() {
     std::cout << "inverse is\n" << inverse << std::endl;
     std::cout << "Result of matmul with matrix and its inverse is\n" << identity << std::endl;
 
-    Matrix xData(10, 1);
-    xData(0, 0) = 1;
-    xData(1, 0) = 2;
-    xData(2, 0) = 3;
-    xData(3, 0) = 4;
-    xData(4, 0) = 5;
-    xData(5, 0) = 6;
-    xData(6, 0) = 7;
-    xData(7, 0) = 8;
-    xData(8, 0) = 9;
-    xData(9, 0) = 10;
+    Matrix xData(6, 1);
+    xData(0, 0) = 2;
+    xData(1, 0) = 7;
+    xData(2, 0) = 4;
+    xData(3, 0) = 3;
+    xData(4, 0) = 0;
+    xData(5, 0) = -1;
 
-    Matrix yData(10, 1);
-    yData(0, 0) = 11;
-    yData(1, 0) = 12;
-    yData(2, 0) = 13;
-    yData(3, 0) = 14;
-    yData(4, 0) = 15;
-    yData(5, 0) = 16;
-    yData(6, 0) = 17;
-    yData(7, 0) = 18;
-    yData(8, 0) = 19;
-    yData(9, 0) = 20;
+
+    Matrix yData(6, 1);
+    yData(0, 0) = 3;
+    yData(1, 0) = 9;
+    yData(2, 0) = 1;
+    yData(3, 0) = 7;
+    yData(4, 0) = -3;
+    yData(5, 0) = -7;
     /*
     yData(0, 0) = 2;
     yData(1, 0) = 4;
@@ -112,7 +105,9 @@ int main() {
     LinearRegressor linreg1(&xData, &yData);
     std::cout << "Error is: " << linreg1.getError() << std::endl;
     Matrix testData(1, 1);
-    testData(0, 0) = 15;
+    testData(0, 0) = 825;
     ComplexNum prediction = linreg1.predict(&testData);
     std::cout << "Prediction is " << prediction << std::endl;
+    Matrix regressionCoeff = linreg1.getRegressionCoefficients();
+    std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 }

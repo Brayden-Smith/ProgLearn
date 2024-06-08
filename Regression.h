@@ -18,6 +18,7 @@ public:
 
     int getNumVars();
     double getError();
+    Matrix getRegressionCoefficients();
 
     // Setters
 
