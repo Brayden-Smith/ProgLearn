@@ -30,3 +30,10 @@ private:
 };
 
 
+class LogisticRegressor {
+public:
+
+
+
+private:
+};

@@ -3,7 +3,7 @@
 
 Matrix::Matrix(int nr, int nc) : numRows(nr), numCols(nc), entryData(nr, std::vector<ComplexNum>(nc)) {
     if (nr <= 0 || nc <= 0) {
-        throw std::invalid_argument("Invalid size");
+        throw std::invalid_argument("Matrix(int nr, int nc): Invalid size");
     }
 }
 Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {}
@@ -11,7 +11,7 @@ Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(ma
 // Arithmetic operators
 Matrix Matrix::operator +(Matrix const& matrixToAdd) const {
     if (this->numRows != matrixToAdd.numRows || this->numCols != matrixToAdd.numCols) {
-        throw std::invalid_argument("Matrices not of same dimensions");
+        throw std::invalid_argument("Matrix::operator +: Matrices not of same dimensions");
     }
 
     Matrix matrixToReturn(numRows, numCols);
@@ -43,7 +43,7 @@ Matrix Matrix::operator *(double numToMul) const {
 
 Matrix Matrix::operator -(Matrix const& matrixToSub) const {
     if (this->numRows != matrixToSub.numRows || this->numCols != matrixToSub.numCols) {
-        throw std::invalid_argument("Matrices not of same dimensions");
+        throw std::invalid_argument("Matrix::operator -: Matrices not of same dimensions");
     }
 
     Matrix matrixToReturn(matrixToSub.numRows, matrixToSub.numCols);
@@ -58,7 +58,7 @@ Matrix Matrix::operator -(Matrix const& matrixToSub) const {
 // Equals
 Matrix& Matrix::operator =(Matrix const& matrixToCopy) {
     if (this->numRows != matrixToCopy.numRows || this->numCols != matrixToCopy.numCols) {
-        throw std::invalid_argument("Matrices not of same dimensions");
+        throw std::invalid_argument("Matrix::operator =: Matrices not of same dimensions");
     }
 
     for (int i = 0; i < numRows; i++) {
@@ -86,7 +86,7 @@ bool Matrix::operator ==(const Matrix& otherMatrix) const {
 // Entry access operator
 ComplexNum& Matrix::operator ()(int i, int j)  {
     if (this->numRows <= i || this->numCols <= j || i < 0 || j < 0) {
-        throw std::invalid_argument("Entry index out of bounds");
+        throw std::invalid_argument("Matrix::operator (): Entry index out of bounds");
     }
     return this->entryData[i][j];
 }
@@ -95,7 +95,7 @@ ComplexNum& Matrix::operator ()(int i, int j)  {
 Matrix Matrix::operator[](int n) const { // Honestly don't know which operator to use for this tried to make as intuitive as possible
 
     if (this->numCols <= n || n < 0) {
-        throw std::invalid_argument("Index out of bounds");
+        throw std::invalid_argument("Matrix::operator[]: Index out of bounds");
     }
 
     Matrix result (this->numRows, 1);
@@ -108,7 +108,7 @@ Matrix Matrix::operator[](int n) const { // Honestly don't know which operator t
 //column mutator
 void Matrix::columnAssign(int n, Matrix* M) {
     if(M->numCols > 1 || this->numRows < M->numRows) {
-        throw std::invalid_argument("Invalid column dimensions");
+        throw std::invalid_argument("Matrix::columnAssign: Invalid column dimensions");
     }
 
     for(int i = 0; i < numRows; i++) {
@@ -119,7 +119,7 @@ void Matrix::columnAssign(int n, Matrix* M) {
 //Row accessor operator
 Matrix Matrix::operator()(int n) const {
     if (this->numRows <= n || n < 0) {
-        throw std::invalid_argument("Index out of bounds");
+        throw std::invalid_argument("Matrix::operator(): Index out of bounds");
     }
 
     Matrix result(1,this->numRows);
@@ -131,7 +131,7 @@ Matrix Matrix::operator()(int n) const {
 //Row mutator
 Matrix Matrix::rowAssign(int n, Matrix* M) {
     if(M->numRows > 1 || this->numCols < M->numCols) {
-        throw std::invalid_argument("Invalid dimensions ");
+        throw std::invalid_argument("Matrix::rowAssign: Invalid dimensions ");
     }
 
     for(int i = 0; i < numCols; i++) {

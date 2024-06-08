@@ -1,16 +1,13 @@
 #include "Regression.h"
 
-
-
-
 Matrix ordinaryLeastSquaresCoefficients(Matrix* xData, Matrix* yData) { // XData must be invertible. Entries in original XData are horizontal (one row is one observation)
 // Internally, one column is one observation, but not until after the transpose
     if (xData->getNumRows() <= xData->getNumCols()) {
-        throw std::invalid_argument("Must have more observations than predictors"); // To decrease the chance of XX^T being singular
+        throw std::invalid_argument("ordinaryLeastSquaresCoefficients: Must have more observations than predictors"); // To decrease the chance of XX^T being singular
     }
 
     if (yData->getNumCols() > 1) {
-        throw std::invalid_argument("Invalid y vector!");
+        throw std::invalid_argument("ordinaryLeastSquaresCoefficients: Invalid y vector!");
     }
 
     Matrix columnOfOnes(xData->getNumRows(), 1);
@@ -74,3 +71,6 @@ double LinearRegressor::getError() {
 Matrix LinearRegressor::getRegressionCoefficients() {
     return this->regressionCoefficients;
 }
+
+
+

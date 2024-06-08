@@ -167,7 +167,7 @@ double magnitudeOfNumber(double numToMag) {
 }
 double complexNumToDouble(const ComplexNum& num) {
     if (num.getImagPart() != 0) {
-        throw std::invalid_argument("Cannot convert complex number with non-zero imaginary part to double");
+        throw std::invalid_argument("complexNumToDouble: Cannot convert complex number with non-zero imaginary part to double");
     }
     return num.getRealPart();
 }

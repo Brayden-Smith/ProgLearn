@@ -17,7 +17,7 @@ void thresholdStabilize(Matrix* matrixToStabilize) {
 
 Matrix matMul(Matrix* lhs, Matrix* rhs) {
     if (lhs->getNumCols() != rhs->getNumRows()) {
-        throw std::invalid_argument("Invalid matrix dimensions");
+        throw std::invalid_argument("matMul: Invalid matrix dimensions");
     }
 
     Matrix product(lhs->getNumRows(), rhs->getNumCols());
@@ -36,7 +36,7 @@ Matrix matMul(Matrix* lhs, Matrix* rhs) {
 
 double realTraceOfMatrix(Matrix* matrixToTrace) { // Only defined for real matrices at the moment
     if (matrixToTrace->getNumRows() != matrixToTrace->getNumCols()) {
-        throw std::invalid_argument("Trace is only defined for square matrices");
+        throw std::invalid_argument("realTraceOfMatrix: Trace is only defined for square matrices");
     }
 
     double runningTrace = 0;
@@ -80,7 +80,7 @@ double frobeniusNorm(Matrix* matrixToNorm) {
 
 ComplexNum InnerProduct(Matrix& u, Matrix& v) {
     if (u.getNumCols() != 1 || v.getNumCols() != 1) {
-        throw std::invalid_argument("Vectors must be nx1 matrices");
+        throw std::invalid_argument("InnerProduct: Vectors must be nx1 matrices");
     }
 
     ComplexNum result(0, 0);
@@ -153,7 +153,7 @@ void swapRowsInMatrix(Matrix* matrixToSwap, int posRowOne, int posRowTwo) {
 
 Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB) {
     if (matrixA->getNumRows() != matrixB->getNumRows()) {
-        throw std::invalid_argument("Matrices must have same number of rows");
+        throw std::invalid_argument("createAugmentedMatrix: Matrices must have same number of rows");
     }
     Matrix matrixToReturn(matrixA->getNumRows(), matrixA->getNumCols() + matrixB->getNumCols());
 
@@ -178,7 +178,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
     //std::cout << "Augmented matrix to perform row reduction on:\n" << augmentedMatrixPrePointer << std::endl;
 
     if (augmentedMatrix->getNumRows() + 1 != augmentedMatrix->getNumCols()) {
-        throw std::invalid_argument("Augmented matrix must be of size n x n+1");
+        throw std::invalid_argument("gaussianElimination: Augmented matrix must be of size n x n+1");
     }
     // Forward elimination
     for (int i = 0; i < augmentedMatrix->getNumCols() - 2; i++) {
@@ -193,7 +193,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
             }
         }
         if (magnitudeOfNumber(maxElementInColumn) < 1e-6) {
-            throw std::invalid_argument("Matrix is singular!");
+            throw std::invalid_argument("gaussianElimination: Matrix is singular!");
         }
 
         if (maxElementInColumnRowPos != i) {
@@ -228,7 +228,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
     for (int i = 0; i < augmentedMatrix->getNumCols() - 1; i++) {
         // Get the largest element in column and swap rows for numerical stability
         if (magnitudeOfNumber((*augmentedMatrix)(i, i)) < 1e-6) {
-            throw std::invalid_argument("Matrix is singular!");
+            throw std::invalid_argument("gaussianElimination: Matrix is singular!");
         }
         //std::cout << "here?" << std::endl;
 
@@ -266,7 +266,7 @@ Matrix gaussianElimination(Matrix* matrix, Matrix* vector) {
 
 Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That being said, we can speed this up in the future if needed, but at the moment I want "easy" code for debugging
     if (matrixToInvert->getNumRows() != matrixToInvert->getNumCols()) {
-        throw std::invalid_argument("Matrix must be nxn!");
+        throw std::invalid_argument("inverseMatrix: Matrix must be nxn!");
     }
 
     Matrix outputMatrix(matrixToInvert->getNumRows(), matrixToInvert->getNumCols());
