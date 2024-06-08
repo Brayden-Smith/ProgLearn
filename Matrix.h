@@ -18,6 +18,7 @@ public:
     Matrix operator * (ComplexNum const& scalar);
     Matrix operator *(double numToMul) const;
     friend Matrix operator*(double lhs, const Matrix& rhs);
+    friend Matrix operator*(ComplexNum lhs, const Matrix&rhs);
     Matrix operator -(Matrix const& matrixToSub) const;
 
     //Equality operators
@@ -48,3 +49,4 @@ public:
 };
 
 Matrix operator*(double lhs, const Matrix &rhs);
+Matrix operator*(ComplexNum lhs, const Matrix&rhs);

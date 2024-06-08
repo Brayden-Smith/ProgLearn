@@ -157,6 +157,16 @@ Matrix operator*(double lhs, const Matrix &rhs) {
     return matrixToReturn;
 }
 
+Matrix operator*(ComplexNum lhs, const Matrix &rhs) {
+    Matrix matrixToReturn(rhs.numRows, rhs.numRows);
+    for (int i = 0; i < rhs.numRows; i++) {
+        for (int j = 0; i < rhs.numCols; j++) {
+            matrixToReturn.entryData[i][j] = rhs.entryData[i][j] * lhs;
+        }
+    }
+    return matrixToReturn;
+}
+
 
 std::ostream &operator<<(std::ostream &outputStream, const Matrix& matrixToPrint) {
 
