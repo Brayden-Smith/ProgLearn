@@ -101,7 +101,9 @@ void normalizeVectorsInMatrix(Matrix* pointerToMatrix) {
             double magnitude = magnitudeOfNumber((*pointerToMatrix)(j,i));
             Norm += (magnitude * magnitude);
         }
-
+        if (Norm == 1) {
+            return;
+        }
         Norm = sqrt(Norm);
         double oneOverMagnitude = 1/Norm;
         for (int j = 0; j < pointerToMatrix->getNumRows(); j++) {
@@ -282,6 +284,147 @@ Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That bein
     }
 
     return outputMatrix;
+}
+
+//gets magnitude of column matrix
+double VectorNorm(Matrix* pointerToMatrix) {
+    double Norm = 0;
+    for (int j = 0; j < pointerToMatrix->getNumRows(); j++) {
+        double magnitude = magnitudeOfNumber((*pointerToMatrix)(j,0));
+        Norm += (magnitude * magnitude);
+    }
+    if(Norm == 1) {
+        return Norm;
+    }
+    return sqrt(Norm);
+}
+
+Matrix unitVector(int k, int dim) {
+    if (k > dim || dim < 1  || k < 0) {
+        throw std::invalid_argument("unitVector: Invalid input");
+    }
+    Matrix e(dim,1);
+    e(k,0) = 1;
+    return e;
+}
+
+Matrix identityMatrix(int dim) {
+    if(dim < 1) {
+        throw std::invalid_argument("identityMatrix: Invalid input");
+    }
+    Matrix I(dim,dim);
+
+    //replace each column with unit vector
+    for(int i = 0; i < dim; i++) {
+        Matrix ek = unitVector(i,dim);
+        I.columnAssign(i,&ek);
+    }
+
+    return I;
+}
+
+Matrix frontFillVec(Matrix M, int dim, ComplexNum Fill) {
+    if(M.getNumCols() > 1 || dim < 1 || dim < M.getNumCols()) {
+        throw std::invalid_argument("frontFillVec: Invalid input");
+    }
+
+
+    Matrix result(dim,1);
+    for(int i = 0; i < dim; i++) {
+        //fill with num until getting to matrix with data
+        if(i < dim - M.getNumRows()) {
+            result(i,0) = Fill;
+        }
+        else {
+            result(i,0) = M(i - (dim - M.getNumRows()),0);
+        }
+    }
+    return result;
+}
+
+Matrix minorMatrix(Matrix M,int iDel, int jDel) {
+    Matrix Minor(M.getNumRows() -1,M.getNumCols() -1);
+    for(int i = 0; i < M.getNumRows(); i++) {
+        if (i < iDel) {
+            for(int j = 0; j < M.getNumCols(); j++) {{
+                if(j < jDel) {
+                    Minor(i,j) = M(i,j);
+                }
+                else if(j > jDel) {
+                    Minor(i,j-1) = M(i,j);
+                }
+            }}
+        }
+        else if(i > iDel) {
+            for(int j = 0; j < M.getNumCols(); j++) {{
+                if(j < jDel) {
+                    Minor(i-1,j) = M(i,j);
+                }
+                else if(j > jDel) {
+                    Minor(i-1,j-1) = M(i,j);
+                }
+            }}
+        }
+    }
+    return Minor;
+}
+
+Matrix householderTransform(Matrix* x) {
+    if (x->getNumCols() > 1) {
+        throw std::invalid_argument("HouseholderTransform: Invalid input");
+    }
+
+    Matrix y = (*x)(0,0).sign() * VectorNorm(x) * unitVector(0,x->getNumRows());
+    y = *x + y;
+    return y;
+}
+
+std::vector<Matrix> QRDecomp(Matrix A) {
+
+    Matrix R = A;
+    std::vector<Matrix> HTransforms;
+    for(int i = 0; i < A.getNumCols(); i++) {
+        if(i > 0) {
+            R = minorMatrix(R,0,0);
+        }
+
+
+        //get transformation on column
+        Matrix a = R[0];
+        Matrix v = householderTransform(&a);
+        Matrix vT = conjTranspose(&v);
+
+
+        //get the transformation on the matrix
+        Matrix H = identityMatrix(R.getNumRows());
+        H = H - ((ComplexNum(2,0) / InnerProduct(v,v) * (matMul(&v,&vT)) ));
+        HTransforms.push_back(H);
+
+        R = matMul(&H,&R);
+
+
+    }
+
+    for(int i = 1; i < HTransforms.size(); i++) {
+        Matrix resized = identityMatrix(HTransforms[0].getNumCols());
+        for(int j = HTransforms[0].getNumCols()-HTransforms[i].getNumCols(); j < HTransforms[0].getNumCols(); j++){
+            Matrix toFrontLoad = (HTransforms[i])[j-(HTransforms[0].getNumCols()-HTransforms[i].getNumCols())];
+            Matrix processed = frontFillVec(toFrontLoad,HTransforms[0].getNumCols(),ComplexNum(0,0));
+            resized.columnAssign(j,&processed);
+        }
+        HTransforms[i] = resized;
+    }
+
+    Matrix Q = HTransforms.back();
+    for(int i = HTransforms.size() - 2; i >= 0; i--) {
+        Q = matMul(&HTransforms[i],&Q);
+    }
+
+    R = A;
+    for(int i = 0; i < HTransforms.size(); i++) {
+        R = matMul(&HTransforms[i],&R);
+    }
+    return {Q,R};
 }
 
 

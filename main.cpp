@@ -56,21 +56,28 @@ int main() {
     auto G = GramSchmidt(D);
     //std::cout << ComplexNum(-4, -4) << std::endl;
 
-    Matrix matrixToInvert(3, 3);
-    matrixToInvert(0,0) = ComplexNum(2, 1);
-    matrixToInvert(1,0) = ComplexNum(4, 0);
-    matrixToInvert(2,0) = ComplexNum(1, 2);
-    matrixToInvert(0,1) = ComplexNum(1, -1);
-    matrixToInvert(1,1) = ComplexNum(-2, 2);
-    matrixToInvert(2,1) = ComplexNum(2, -1);
-    matrixToInvert(0,2) = ComplexNum(3, 0);
-    matrixToInvert(1,2) = ComplexNum(5, 0);
-    matrixToInvert(2,2) = ComplexNum(3, 1);
+    Matrix Fill(2,1);
+    Fill(0,0) = 2;
+    Fill(1,0) = 3;
+    //auto t = frontFillVec(Fill,5,ComplexNum(5,5));
+    //std::cout << t;
 
-    Matrix inverse = inverseMatrix(&matrixToInvert);
-    Matrix identity = matMul(&inverse, &matrixToInvert);
-    std::cout << "inverse is\n" << inverse << std::endl;
-    std::cout << "Result of matmul with matrix and its inverse is\n" << identity << std::endl;
+    Matrix matrixToDecomp(4, 3);
+    matrixToDecomp(0,0) = ComplexNum(1, 0);
+    matrixToDecomp(1,0) = ComplexNum(1, 0);
+    matrixToDecomp(2,0) = ComplexNum(1, 0);
+    matrixToDecomp(3,0) = ComplexNum(1, 0);
+    matrixToDecomp(0,1) = ComplexNum(-1, 0);
+    matrixToDecomp(1,1) = ComplexNum(4, 0);
+    matrixToDecomp(2,1) = ComplexNum(4, 0);
+    matrixToDecomp(3,1) = ComplexNum(-1, 0);
+    matrixToDecomp(0,2) = ComplexNum(4, 0);
+    matrixToDecomp(1,2) = ComplexNum(-2, 0);
+    matrixToDecomp(2,2) = ComplexNum(2, 0);
+    matrixToDecomp(3,2) = ComplexNum(0, 0);
+    std::cout << "the R of QR Decomposition\n" << QRDecomp(matrixToDecomp)[0];
+
+
 
     Matrix xData(6, 1);
     xData(0, 0) = 2;

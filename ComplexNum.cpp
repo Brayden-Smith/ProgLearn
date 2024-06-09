@@ -137,6 +137,14 @@ ComplexNum ComplexNum::getConjugate() const {
     return numToReturn;
 }
 
+double ComplexNum::sign() const {
+    if(this->realPart == 0 || this->imagPart == 0) {
+        return 1;
+    }
+    return ((*this) / magnitudeOfNumber(*this)).getRealPart();
+
+}
+
 // Friend functions for commutativity
 ComplexNum operator+(double lhs, const ComplexNum& rhs) {
     return {lhs + rhs.getRealPart(), rhs.getImagPart()};

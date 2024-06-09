@@ -45,6 +45,7 @@ public:
     //Methods
     double getMagnitude() const;
     ComplexNum getConjugate() const;
+    double sign() const;
 
     friend std::ostream& operator<<(std::ostream& outputStream, const ComplexNum& numberToPrint);
 
