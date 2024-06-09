@@ -16,8 +16,8 @@ public:
     //Arithmetic operators
     Matrix operator + (Matrix const& matrixToAdd) const;
     Matrix operator * (ComplexNum const& scalar);
-    Matrix operator *(double numToMul) const;
-    friend Matrix operator*(double lhs, const Matrix& rhs);
+    Matrix operator *(double numToMul);
+    friend Matrix operator*(double lhs, Matrix& rhs);
     friend Matrix operator*(ComplexNum lhs, const Matrix&rhs);
     Matrix operator -(Matrix const& matrixToSub) const;
 
@@ -48,5 +48,5 @@ public:
 
 };
 
-Matrix operator*(double lhs, const Matrix &rhs);
+//Matrix operator*(double lhs, const Matrix &rhs);
 Matrix operator*(ComplexNum lhs, const Matrix&rhs);

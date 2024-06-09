@@ -110,4 +110,6 @@ int main() {
     std::cout << "Prediction is " << prediction << std::endl;
     Matrix regressionCoeff = linreg1.getRegressionCoefficients();
     std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
+
+    Matrix newMatrix = yData * ComplexNum(3, 0) ;
 }

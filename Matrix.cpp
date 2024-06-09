@@ -31,7 +31,8 @@ Matrix Matrix::operator *(ComplexNum const& scalar) {
     }
     return matrixToReturn;
 }
-Matrix Matrix::operator *(double numToMul) const {
+
+Matrix Matrix::operator *(double numToMul) {
     Matrix matrixToReturn(this->numRows, this->numRows);
     for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
@@ -147,21 +148,21 @@ int Matrix::getNumCols() const {
     return this->numCols;
 }
 
-Matrix operator*(double lhs, const Matrix &rhs) {
-    Matrix matrixToReturn(rhs.numRows, rhs.numRows);
-    for (int i = 0; i < rhs.numRows; i++) {
-        for (int j = 0; i < rhs.numCols; j++) {
-            matrixToReturn.entryData[i][j] = rhs.entryData[i][j] * lhs;
+Matrix operator*(double lhs, Matrix &rhs) {
+    Matrix matrixToReturn(rhs.getNumRows(), rhs.getNumCols());
+    for (int i = 0; i < rhs.getNumRows(); i++) {
+        for (int j = 0; i < rhs.getNumCols(); j++) {
+            matrixToReturn(i, j) = rhs(i,j) * lhs;
         }
     }
     return matrixToReturn;
 }
 
-Matrix operator*(ComplexNum lhs, const Matrix &rhs) {
-    Matrix matrixToReturn(rhs.numRows, rhs.numRows);
-    for (int i = 0; i < rhs.numRows; i++) {
-        for (int j = 0; i < rhs.numCols; j++) {
-            matrixToReturn.entryData[i][j] = rhs.entryData[i][j] * lhs;
+Matrix operator*(ComplexNum lhs, Matrix &rhs) {
+    Matrix matrixToReturn(rhs.getNumRows(), rhs.getNumCols());
+    for (int i = 0; i < rhs.getNumRows(); i++) {
+        for (int j = 0; i < rhs.getNumCols(); j++) {
+            matrixToReturn(i, j) = rhs(i,j) * lhs;
         }
     }
     return matrixToReturn;
