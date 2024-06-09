@@ -112,4 +112,5 @@ int main() {
     std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 
     Matrix newMatrix = ComplexNum(3, 0) * yData;
+    D = yData;
 }

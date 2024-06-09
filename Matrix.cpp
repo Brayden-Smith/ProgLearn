@@ -60,15 +60,14 @@ Matrix Matrix::operator -(Matrix const& matrixToSub) const {
 
 // Equals
 Matrix& Matrix::operator =(Matrix const& matrixToCopy) {
+    /*
     if (this->numRows != matrixToCopy.numRows || this->numCols != matrixToCopy.numCols) {
         throw std::invalid_argument("Matrix::operator =: Matrices not of same dimensions");
     }
-
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; j < numCols; j++) {
-            this->entryData[i][j] = matrixToCopy.entryData[i][j];
-        }
-    }
+     */
+    this->numRows = matrixToCopy.numRows;
+    this->numCols = matrixToCopy.numCols;
+    this->entryData = matrixToCopy.entryData;
     return *this;
 }
 bool Matrix::operator ==(const Matrix& otherMatrix) const {
