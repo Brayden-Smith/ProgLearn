@@ -19,6 +19,7 @@ public:
     bool operator==(const ComplexNum& otherNum) const;
     bool operator==(double otherNum) const;
     bool operator!=(const ComplexNum& otherNum) const;
+    bool operator<(const ComplexNum& otherNum) const; // DO NOT USE; THIS ONLY EXISTS TO MAKE STD::SET WORK
 
     //Copy constructors
     ComplexNum(const ComplexNum& numToCopy);

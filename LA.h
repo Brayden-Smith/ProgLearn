@@ -1,5 +1,7 @@
 #pragma once
 #include "Matrix.h"
+#include <set>
+#include <unordered_set>
 
 
 void thresholdStabilize(Matrix* matrixToStabilize);
@@ -24,3 +26,5 @@ Matrix identityMatrix(int dim);
 Matrix frontFillVec(Matrix M, int dim, ComplexNum Fill);
 Matrix householderTransform(Matrix* x);
 std::vector<Matrix> QRDecomp(Matrix A);
+
+std::vector<ComplexNum> eigenvalues(Matrix* matrix);

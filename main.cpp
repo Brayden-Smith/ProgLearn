@@ -75,8 +75,9 @@ int main() {
     matrixToDecomp(1,2) = ComplexNum(-2, 0);
     matrixToDecomp(2,2) = ComplexNum(2, 0);
     matrixToDecomp(3,2) = ComplexNum(0, 0);
-    std::cout << "the R of QR Decomposition\n" << QRDecomp(matrixToDecomp)[0];
-
+    //std::cout << "the Q of QR Decomposition\n" << QRDecomp(matrixToDecomp)[0];
+    //std::cout << "Matrix to decomp\n" << matrixToDecomp;
+    //std::cout << "The R of QR decomp\n" << QRDecomp(matrixToDecomp)[1];
 
 
     Matrix xData(6, 1);
@@ -109,15 +110,34 @@ int main() {
      */
 
 
+    // OLS regression test
     LinearRegressor linreg1(&xData, &yData);
-    std::cout << "Error is: " << linreg1.getError() << std::endl;
+    //std::cout << "Error is: " << linreg1.getError() << std::endl;
     Matrix testData(1, 1);
     testData(0, 0) = 825;
     ComplexNum prediction = linreg1.predict(&testData);
-    std::cout << "Prediction is " << prediction << std::endl;
+    //std::cout << "Prediction is " << prediction << std::endl;
     Matrix regressionCoeff = linreg1.getRegressionCoefficients();
-    std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
+    //std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 
-    Matrix newMatrix = ComplexNum(3, 0) * yData;
-    D = yData;
+    // Eigenvalues test
+
+    Matrix wantEigenvalues(3, 3);
+    wantEigenvalues(0, 0) = 1;
+    wantEigenvalues(1, 0) = 3;
+    wantEigenvalues(2, 0) = 2;
+    wantEigenvalues(0, 1) = 2;
+    wantEigenvalues(1, 1) = 2;
+    wantEigenvalues(2, 1) = 1;
+    wantEigenvalues(0, 2) = 3;
+    wantEigenvalues(1, 2) = 1;
+    wantEigenvalues(2, 2) = 3;
+
+    std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
+    std::cout << "Eigenvalues" << std::endl;
+    std::cout << "eigens length is " << eigens.size() << std::endl;
+    for (int i = 0; i < eigens.size(); i++) {
+        std::cout << eigens[i] << std::endl;
+    }
+
 }

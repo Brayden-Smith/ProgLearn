@@ -34,6 +34,17 @@ bool ComplexNum::operator==(double otherNum) const {
 bool ComplexNum::operator!=(const ComplexNum& otherNum) const {
     return (!(this->realPart == otherNum.realPart && this->imagPart == otherNum.imagPart));
 }
+
+bool ComplexNum::operator<(const ComplexNum& otherNum) const {
+    if (this->realPart < otherNum.realPart) {
+        return true;
+    }
+    if (this->realPart > otherNum.realPart) {
+        return false;
+    }
+    return this->imagPart < otherNum.imagPart;
+}
+
 // Copy constructors
 
 ComplexNum::ComplexNum(const ComplexNum& numToCopy) {

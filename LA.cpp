@@ -371,7 +371,7 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel) {
 
 Matrix householderTransform(Matrix* x) {
     if (x->getNumCols() > 1) {
-        throw std::invalid_argument("HouseholderTransform: Invalid input");
+        throw std::invalid_argument("householderTransform: Invalid input");
     }
 
     Matrix y = (*x)(0,0).sign() * VectorNorm(x) * unitVector(0,x->getNumRows());
@@ -424,9 +424,70 @@ std::vector<Matrix> QRDecomp(Matrix A) {
     for(int i = 0; i < HTransforms.size(); i++) {
         R = matMul(&HTransforms[i],&R);
     }
+    std::cout << "Q inside Brayden's decomp is:\n" << Q << std::endl;
+    std::cout << "R inside Brayden's decomp is:\n" << R << std::endl;
     return {Q,R};
 }
 
 
+std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
+    if (matrix->getNumRows() != matrix->getNumCols()) {
+        throw std::invalid_argument("eigenvalues: matrix must be n x n!");
+    }
+
+    Matrix matrixToIterate = (*matrix);
+    // Check to see if matrix is already upper triangular
+
+    bool akIsUpperTriangular = true;
+
+    for (int i = 0; i < matrixToIterate.getNumCols(); i++) { // Probably better to just make a "do while" loop here
+        for (int j = i + 1; j < matrixToIterate.getNumRows(); j++) {
+            if (magnitudeOfNumber((matrixToIterate)(j, i)) > 1e-9) {
+                akIsUpperTriangular = false;
+            }
+        }
+    }
 
 
+
+    while (!akIsUpperTriangular) {
+        std::cout << "Matrix to iterate:\n" <<  matrixToIterate << std::endl;
+        std::vector<Matrix> currentQR = QRDecomp(matrixToIterate);
+        std::cout << "Q is:\n" << currentQR[0] << std::endl;
+        std::cout << "R is:\n" << currentQR[1] << std::endl;
+        matrixToIterate = matMul(&currentQR[1], &currentQR[0]);
+        //std::cout << matrixToIterate << std::endl;
+
+        // Check if matrixToIterate is upper triangular
+        akIsUpperTriangular = true;
+        for (int i = 0; i < matrixToIterate.getNumRows(); i++) {
+            for (int j = i + 1; j < matrixToIterate.getNumRows(); j++) {
+                if (magnitudeOfNumber((matrixToIterate)(j, i)) > 1e-9) {
+                    akIsUpperTriangular = false;
+                }
+            }
+        }
+
+    }
+
+    //std::cout << "akIsUpperTriangular and ak is:\n" << matrixToIterate << std::endl;
+
+    std::set<ComplexNum> setOfEigenvalues;
+    for (int i = 0; i < matrixToIterate.getNumRows(); i++) {
+        double numImagPart = (matrixToIterate(i, i)).getImagPart();
+        double numRealPart = (matrixToIterate(i, i)).getRealPart();
+        ComplexNum newCNum(numRealPart, numImagPart);
+        setOfEigenvalues.insert(newCNum);
+    }
+
+    std::vector<ComplexNum> vectorOfEigenvalues;
+    for (const ComplexNum& element : setOfEigenvalues) {
+        double numImagPart = element.getImagPart();
+        double numRealPart = element.getRealPart();
+        ComplexNum newCNum(numRealPart, numImagPart);
+        vectorOfEigenvalues.push_back(newCNum);
+    }
+
+    return vectorOfEigenvalues;
+
+}
