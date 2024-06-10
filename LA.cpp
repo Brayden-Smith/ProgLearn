@@ -424,8 +424,6 @@ std::vector<Matrix> QRDecomp(Matrix A) {
     for(int i = 0; i < HTransforms.size(); i++) {
         R = matMul(&HTransforms[i],&R);
     }
-    std::cout << "Q inside Brayden's decomp is:\n" << Q << std::endl;
-    std::cout << "R inside Brayden's decomp is:\n" << R << std::endl;
     return {Q,R};
 }
 

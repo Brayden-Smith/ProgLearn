@@ -132,12 +132,15 @@ int main() {
     wantEigenvalues(0, 2) = 3;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 3;
+    std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
+    /*
     std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
     std::cout << "Eigenvalues" << std::endl;
     std::cout << "eigens length is " << eigens.size() << std::endl;
     for (int i = 0; i < eigens.size(); i++) {
         std::cout << eigens[i] << std::endl;
     }
+     */
 
 }

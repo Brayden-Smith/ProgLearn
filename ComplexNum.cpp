@@ -149,7 +149,7 @@ ComplexNum ComplexNum::getConjugate() const {
 }
 
 double ComplexNum::sign() const {
-    if(this->realPart == 0 || this->imagPart == 0) {
+    if(this->realPart == 0 && this->imagPart == 0) {
         return 1;
     }
     return ((*this) / magnitudeOfNumber(*this)).getRealPart();
