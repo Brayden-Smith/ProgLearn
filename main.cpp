@@ -116,7 +116,7 @@ int main() {
     Matrix testData(1, 1);
     testData(0, 0) = 825;
     ComplexNum prediction = linreg1.predict(&testData);
-    //std::cout << "Prediction is " << prediction << std::endl;
+    //@std::cout << "Prediction is " << prediction << std::endl;
     Matrix regressionCoeff = linreg1.getRegressionCoefficients();
     //std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 
@@ -220,13 +220,16 @@ int main() {
     OlsLogisticRegressor logreg;
     logreg.fit(&logregx, &logregy);
 
-    Matrix xpred(1, 2);
+    Matrix xpred(2, 2);
     xpred(0, 0) = 45;
     xpred(0, 1) = 65000;
+    xpred(1, 0) = 23;
+    xpred(1, 1) = 60000;
 
     Matrix ypred = logreg.predict(&xpred);
-    //std::cout << "ypred is:\n" << ypred << std::endl;
+    std::cout << "ypred is:\n" << ypred << std::endl;
     //std::cout << "Regression coefficients are:\n" << logreg.getRegressionCoefficients() << std::endl;
 
 
+    std::vector<Matrix> John = singularValueDecomp(&wantEigenvalues);
 }

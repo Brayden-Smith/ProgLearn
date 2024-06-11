@@ -32,6 +32,8 @@ std::vector<Matrix> QRDecomp(Matrix const& A);
 
 bool isUpperTriangular(Matrix* mat);
 std::vector<ComplexNum> eigenvalues(Matrix* matrix);
+std::vector<Matrix> singularValueDecomp(Matrix* matrix);
+
 
 ComplexNum expectedValue(Matrix* Z);
 ComplexNum covariance(Matrix* Z, Matrix* W);

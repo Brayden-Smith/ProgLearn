@@ -523,6 +523,79 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
 
 }
 
+std::vector<Matrix> singularValueDecomp(Matrix* matrix) {
+    // The first step is to create an empty sigma matrix, as this part of the code finds the singular values and sigma
+    std::vector<Matrix> decompToReturn;
+
+    Matrix sigma(matrix->getNumRows(), matrix->getNumCols());
+
+    // Now create matrix * matrix^T and matrix^T * matrix
+    Matrix matrixConjTranspose = conjTranspose(matrix);
+    Matrix AAT = matMul(matrix, &matrixConjTranspose);
+    Matrix ATA = matMul(&matrixConjTranspose, matrix);
+
+    // One can choose which matrix to use for eigenvalues based on the dimensions of the original matrix if needed, but only do this if speed becomes a legitimate concern
+    // We now want to find singular values
+
+    std::vector<ComplexNum> eigenvals = eigenvalues(&AAT);
+
+    std::vector<ComplexNum> singularVals;
+    //singularVals.reserve(eigenvals.size());
+    for (int i = 0; i < eigenvals.size(); i++) {
+        singularVals.push_back(sqrt(eigenvals[i]));
+    }
+
+
+    // Now we construct sigma by placing the singular values in order
+    int iCounter = 0;
+    for (int i = singularVals.size() - 1; i >= 0; i--) {
+        if (iCounter >= matrix->getNumRows() || iCounter >= matrix->getNumCols()) {
+            break;
+        }
+        sigma(iCounter, iCounter) = ComplexNum(singularVals[i]);
+        iCounter += 1;
+    }
+
+    //std::cout << sigma;
+
+    // We now proceed to construct V
+
+    std::vector<Matrix> vectorsInV;
+
+    for (int i = singularVals.size() - 1; i >= 0; i--) {
+        Matrix vectorOfZeros(matrix->getNumCols(), 1);
+        Matrix characteristicMatrix = ATA - (eigenvals[i] * identityMatrix(ATA.getNumRows()));
+        //std::cout << "ATA:\n" << ATA << std::endl;
+        //std::cout << "characteristic matrix:\n" << characteristicMatrix << std::endl;
+
+        //Matrix eigenVector = gaussianElimination(&characteristicMatrix, &vectorOfZeros);
+
+        //normalizeVectorsInMatrix(&eigenVector);
+
+        //vectorsInV.push_back(eigenVector);
+
+        // todo find different algorithm for eigenvector computation
+    }
+
+    Matrix V(matrix->getNumCols(), matrix->getNumCols());
+    for (int i = 0; i < vectorsInV.size(); i++) {
+        V[i] = vectorsInV[i];
+    }
+
+    //std::cout << "V:\n" << V << std::endl;
+
+
+
+
+
+    decompToReturn.push_back(identityMatrix(3));
+    return decompToReturn;
+}
+
+
+
+
+
 //assumes all values in the matrix have uniform weight (add another functions that uses weight vector??)
 ComplexNum expectedValue(Matrix* Z) {
     if(Z->getNumCols() > 1) {
