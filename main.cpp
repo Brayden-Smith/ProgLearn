@@ -150,10 +150,10 @@ int main() {
 
 
     std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
-    std::cout << "Eigenvalues" << std::endl;
-    std::cout << "eigens length is " << eigens.size() << std::endl;
+    //std::cout << "Eigenvalues" << std::endl;
+    //std::cout << "eigens length is " << eigens.size() << std::endl;
     for (int i = 0; i < eigens.size(); i++) {
-        std::cout << eigens[i] << std::endl;
+        //std::cout << eigens[i] << std::endl;
     }
 
     //expected value test
@@ -163,7 +163,7 @@ int main() {
     E(2,0) = ComplexNum(3,0);
     E(3,0) = ComplexNum(2,0);
     E(4,0) = ComplexNum(1,0);
-    std::cout<< "\nExpected value: " << expectedValue(&E) << std::endl;
+    //std::cout<< "\nExpected value: " << expectedValue(&E) << std::endl;
 
     //covariance matrix test
     /*
@@ -183,5 +183,50 @@ int main() {
     covariance = covarianceMatrix(&covariance);
     std::cout << covariance;
      */
+
+
+
+    // Logistic regression tests
+    //std::cout << "LOG REG\n" << std::endl;
+    Matrix logregx(7, 2);
+    logregx(0, 0) = 22;
+    logregx(1, 0) = 25;
+    logregx(2, 0) = 47;
+    logregx(3, 0) = 52;
+    logregx(4, 0) = 46;
+    logregx(5, 0) = 56;
+    logregx(6, 0) = 48;
+
+    logregx(0, 1) = 20000;
+    logregx(1, 1) = 35000;
+    logregx(2, 1) = 50000;
+    logregx(3, 1) = 45000;
+    logregx(4, 1) = 30000;
+    logregx(5, 1) = 60000;
+    logregx(6, 1) = 70000;
+
+    Matrix logregy(7, 1);
+    logregy(0, 0) = 0;
+    logregy(1, 0) = 0;
+    logregy(2, 0) = 1;
+    logregy(3, 0) = 1;
+    logregy(4, 0 ) = 0;
+    logregy(5, 0) = 1;
+    logregy(6, 0) = 1;
+
+    LinearRegressor linreg2(&logregx, &logregy);
+    //std::cout << "Ling reg coefficients for this dataset are:\n" << linreg2.getRegressionCoefficients() << std::endl;
+
+    OlsLogisticRegressor logreg;
+    logreg.fit(&logregx, &logregy);
+
+    Matrix xpred(1, 2);
+    xpred(0, 0) = 45;
+    xpred(0, 1) = 65000;
+
+    Matrix ypred = logreg.predict(&xpred);
+    //std::cout << "ypred is:\n" << ypred << std::endl;
+    //std::cout << "Regression coefficients are:\n" << logreg.getRegressionCoefficients() << std::endl;
+
 
 }

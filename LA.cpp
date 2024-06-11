@@ -488,10 +488,10 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
         matrixToIterate = matrixToIterate - (shift * identity);
 
 
-        std::cout << "Matrix to iterate:\n" << matrixToIterate << std::endl;
+        //std::cout << "Matrix to iterate:\n" << matrixToIterate << std::endl;
         std::vector<Matrix> currentQR = QRDecomp(matrixToIterate);
-        std::cout << "Q is:\n" << currentQR[0] << std::endl;
-        std::cout << "R is:\n" << currentQR[1] << std::endl;
+        //std::cout << "Q is:\n" << currentQR[0] << std::endl;
+        //std::cout << "R is:\n" << currentQR[1] << std::endl;
         matrixToIterate = matMul(&currentQR[1], &currentQR[0]);
         //std::cout << matrixToIterate << std::endl;
 

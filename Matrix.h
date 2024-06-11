@@ -12,6 +12,7 @@ public:
     //Constructors
     Matrix (int nr, int nc);
     Matrix(const Matrix& matToCopy);
+    Matrix();
 
     //Arithmetic operators
     Matrix operator + (Matrix const& matrixToAdd) const;
