@@ -34,6 +34,21 @@ Matrix matMul(Matrix* lhs, Matrix* rhs) {
     return product;
 }
 
+//element wise multiplication
+Matrix hadamardProduct(Matrix* lhs, Matrix* rhs) {
+    if(lhs->getNumCols() != rhs->getNumCols() || lhs->getNumRows() != rhs->getNumRows()) {
+        throw std::invalid_argument("hadamardProduct: Matrices have incongruent dimensions");
+    }
+
+    Matrix result = *lhs;
+    for(int i = 0; i < lhs->getNumRows(); i++) {
+        for(int j = 0; j < lhs->getNumCols(); j++) {
+            result(i,j) = (*lhs)(i,j) * (*rhs)(i,j);
+        }
+    }
+    return result;
+}
+
 double realTraceOfMatrix(Matrix* matrixToTrace) { // Only defined for real matrices at the moment
     if (matrixToTrace->getNumRows() != matrixToTrace->getNumCols()) {
         throw std::invalid_argument("realTraceOfMatrix: Trace is only defined for square matrices");
@@ -508,22 +523,23 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
 
 //assumes all values in the matrix have uniform weight (add another functions that uses weight vector??)
 ComplexNum expectedValue(Matrix* Z) {
-    if(Z->getNumCols() > 1) {
+    if(Z->getNumRows() > 1) {
         throw std::invalid_argument("expectedValue: Not a complex random variable");
     }
 
     ComplexNum E(0,0);
-    for(int i = 0; i < Z->getNumRows(); i++) {
-        E += (*Z)(i,0);
+    for(int i = 0; i < Z->getNumCols(); i++) {
+        E += (*Z)(0,i);
     }
-    E = E * (1.0/(Z->getNumRows()));
+    E = E * (1.0/(Z->getNumCols()));
     return E;
 }
 
 ComplexNum covariance(Matrix* Z, Matrix* W) {
-    Matrix conjW = W->conjugate();
-    Matrix ZconjW = matMul(Z,&conjW);
-
+    Matrix Ztranspose = transpose(Z);
+    Matrix Wtranspose = transpose(W);
+    Matrix conjW = Wtranspose.conjugate();
+    Matrix ZconjW = hadamardProduct(&Ztranspose,&conjW);
     ComplexNum EZconjW = expectedValue(&ZconjW);
 
     ComplexNum EZ = expectedValue(Z);
@@ -536,9 +552,15 @@ Matrix covarianceMatrix(Matrix* M) {
     Matrix covarianceMatrix(M->getNumRows(),M->getNumRows());
     for(int i = 0; i < M->getNumRows(); i++){
         for(int j = 0; j < M->getNumRows(); j++) {
+            //compute each component of entry
             Matrix Zi = (*M)(i);
             Matrix Zj = (*M)(j);
-            covarianceMatrix(i,j) = covariance(&Zi,&Zj);
+            Zi = Zi - expectedValue(&Zi);
+            Zj = (Zj - expectedValue(&Zj)).conjugate();
+
+            //set Zi to product to save memory
+            Zi = hadamardProduct(&Zi,&Zj);
+            covarianceMatrix(i,j) = expectedValue(&Zi);
         }
     }
     return covarianceMatrix;

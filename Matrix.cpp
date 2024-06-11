@@ -50,9 +50,19 @@ Matrix Matrix::operator -(Matrix const& matrixToSub) const {
     }
 
     Matrix matrixToReturn(matrixToSub.numRows, matrixToSub.numCols);
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; j < numCols; j++) {
+    for (int i = 0; i < this->numRows; i++) {
+        for (int j = 0; j < this->numCols; j++) {
             matrixToReturn.entryData[i][j] = this->entryData[i][j] - matrixToSub.entryData[i][j];
+        }
+    }
+    return matrixToReturn;
+}
+
+Matrix Matrix::operator -(ComplexNum const& numToSub) const {
+    Matrix matrixToReturn(this->numRows, this->numCols);
+    for (int i = 0; i < this->numRows; i++) {
+        for (int j = 0; j < this->numCols; j++) {
+            matrixToReturn.entryData[i][j] = this->entryData[i][j] - numToSub;
         }
     }
     return matrixToReturn;
@@ -192,9 +202,12 @@ Matrix operator*(double numToMul, Matrix const& matrix) {
 }
 
 Matrix Matrix::conjugate() const {
-    Matrix conjugate(this->numRows,1);
+    Matrix conjugate(this->numRows,this->numCols);
     for(int i = 0; i < this->numRows; i++) {
-        conjugate(i,0) = this->entryData[i][0].getConjugate();
+
+        for(int j = 0; j < this->numCols; j++) {
+            conjugate(i,j) = this->entryData[i][j].getConjugate();
+        }
     }
     return conjugate;
 }

@@ -80,6 +80,7 @@ int main() {
     //std::cout << "The R of QR decomp\n" << QRDecomp(matrixToDecomp)[1];
 
 
+    /*
     Matrix xData(6, 1);
     xData(0, 0) = 2;
     xData(1, 0) = 7;
@@ -96,7 +97,7 @@ int main() {
     yData(3, 0) = 7;
     yData(4, 0) = -3;
     yData(5, 0) = -7;
-    /*
+
     yData(0, 0) = 2;
     yData(1, 0) = 4;
     yData(2, 0) = 5;
@@ -111,13 +112,13 @@ int main() {
 
 
     // OLS regression test
-    LinearRegressor linreg1(&xData, &yData);
+    //LinearRegressor linreg1(&xData, &yData);
     //std::cout << "Error is: " << linreg1.getError() << std::endl;
     Matrix testData(1, 1);
     testData(0, 0) = 825;
-    ComplexNum prediction = linreg1.predict(&testData);
+    //ComplexNum prediction = linreg1.predict(&testData);
     //std::cout << "Prediction is " << prediction << std::endl;
-    Matrix regressionCoeff = linreg1.getRegressionCoefficients();
+    //Matrix regressionCoeff = linreg1.getRegressionCoefficients();
     //std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 
     // Eigenvalues test
@@ -145,13 +146,29 @@ int main() {
     }
 
     //expected value test
-    Matrix E(5,1);
+    Matrix E(1,5);
     E(0,0) = ComplexNum(5,0);
-    E(1,0) = ComplexNum(2,0);
-    E(2,0) = ComplexNum(3,0);
-    E(3,0) = ComplexNum(2,0);
-    E(4,0) = ComplexNum(1,0);
-    std::cout<< "\nExpected value: " << expectedValue(&E) << std::endl;
+    E(0,1) = ComplexNum(2,0);
+    E(0,2) = ComplexNum(3,0);
+    E(0,3) = ComplexNum(2,0);
+    E(0,4) = ComplexNum(1,0);
+    assert(expectedValue(&E) == ComplexNum(2.6,0));
+
+
+    //covariance test
+    Matrix xData(4,1);
+    xData(0,0) = ComplexNum(1,0);
+    xData(1,0) = ComplexNum(-1,0);
+    xData(2,0) = ComplexNum(4,0);
+    xData(3,0) = ComplexNum(0,0);
+    Matrix yData(4,1);
+    yData(0,0) = ComplexNum(1,0);
+    yData(1,0) = ComplexNum(-1,0);
+    yData(2,0) = ComplexNum(4,0);
+    yData(3,0) = ComplexNum(0,0);
+    //std::cout<<covariance(&xData,&yData);
+
+
 
     //covariance matrix test
     Matrix covariance(4,3);

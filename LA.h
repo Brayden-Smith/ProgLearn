@@ -7,7 +7,7 @@
 void thresholdStabilize(Matrix* matrixToStabilize);
 
 Matrix matMul(Matrix* lhs, Matrix* rhs);
-Matrix hadamardProduct(Matrix* rhs, Matrix* lhs);
+Matrix hadamardProduct(Matrix* lhs, Matrix* rhs);
 
 double realTraceOfMatrix(Matrix* matrixToTrace);
 Matrix conjTranspose (Matrix* matrixToTranspose);

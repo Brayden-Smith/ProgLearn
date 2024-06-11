@@ -21,6 +21,7 @@ public:
     friend Matrix operator*(double numToMul, Matrix const& matrix);
     Matrix operator -(Matrix const& matrixToSub) const;
 
+
     //Equality operators
     Matrix& operator =(Matrix const& matrixToCopy);
     bool operator ==(const Matrix& otherMatrix) const;
