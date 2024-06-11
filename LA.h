@@ -27,4 +27,5 @@ Matrix frontFillVec(Matrix M, int dim, ComplexNum Fill);
 Matrix householderTransform(Matrix* x);
 std::vector<Matrix> QRDecomp(Matrix A);
 
+bool isUpperTriangular(Matrix* mat);
 std::vector<ComplexNum> eigenvalues(Matrix* matrix);

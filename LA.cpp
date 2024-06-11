@@ -427,6 +427,17 @@ std::vector<Matrix> QRDecomp(Matrix A) {
     return {Q,R};
 }
 
+bool isUpperTriangular(Matrix* mat) {
+    for (int i = 0; i < mat->getNumCols(); ++i) {
+        for (int j = i + 1; j < mat->getNumRows(); ++j) {
+            if (magnitudeOfNumber((*mat)(j, i)) > 1e-9) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 
 std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     if (matrix->getNumRows() != matrix->getNumCols()) {
@@ -436,20 +447,12 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     Matrix matrixToIterate = (*matrix);
     // Check to see if matrix is already upper triangular
 
-    bool akIsUpperTriangular = true;
 
-    for (int i = 0; i < matrixToIterate.getNumCols(); i++) { // Probably better to just make a "do while" loop here
-        for (int j = i + 1; j < matrixToIterate.getNumRows(); j++) {
-            if (magnitudeOfNumber((matrixToIterate)(j, i)) > 1e-9) {
-                akIsUpperTriangular = false;
-            }
-        }
-    }
-
+    bool akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
 
 
     while (!akIsUpperTriangular) {
-        std::cout << "Matrix to iterate:\n" <<  matrixToIterate << std::endl;
+        std::cout << "Matrix to iterate:\n" << matrixToIterate << std::endl;
         std::vector<Matrix> currentQR = QRDecomp(matrixToIterate);
         std::cout << "Q is:\n" << currentQR[0] << std::endl;
         std::cout << "R is:\n" << currentQR[1] << std::endl;
@@ -457,17 +460,8 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
         //std::cout << matrixToIterate << std::endl;
 
         // Check if matrixToIterate is upper triangular
-        akIsUpperTriangular = true;
-        for (int i = 0; i < matrixToIterate.getNumRows(); i++) {
-            for (int j = i + 1; j < matrixToIterate.getNumRows(); j++) {
-                if (magnitudeOfNumber((matrixToIterate)(j, i)) > 1e-9) {
-                    akIsUpperTriangular = false;
-                }
-            }
-        }
-
+        akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
     }
-
     //std::cout << "akIsUpperTriangular and ak is:\n" << matrixToIterate << std::endl;
 
     std::set<ComplexNum> setOfEigenvalues;
