@@ -428,6 +428,24 @@ std::vector<Matrix> QRDecomp(Matrix const& A) {
 }
 
 
+bool isUpperTriangular(Matrix* mat) {
+    for (int i = 0; i < mat->getNumCols(); ++i) {
+        for (int j = i + 1; j < mat->getNumRows(); ++j) {
+            if (magnitudeOfNumber((*mat)(j, i)) > 1e-9) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+ComplexNum mu(Matrix* matrix) {
+    ComplexNum delta = ((*matrix)(0, 0) - (*matrix)(1, 1))/2;
+    //double radicalMult = sqrt((delta * delta) + )
+
+    return ComplexNum(0, 0);
+}
+
 std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     if (matrix->getNumRows() != matrix->getNumCols()) {
         throw std::invalid_argument("eigenvalues: matrix must be n x n!");
