@@ -62,5 +62,7 @@ ComplexNum complexConjugate(double numToConjugate);
 double magnitudeOfNumber(const ComplexNum& numToMag);
 double magnitudeOfNumber(double numToMag);
 double complexNumToDouble(const ComplexNum& num);
+ComplexNum sqrt(ComplexNum numToSquareroot);
+double getRealSign(ComplexNum num);
 
 

@@ -190,3 +190,17 @@ double complexNumToDouble(const ComplexNum& num) {
     }
     return num.getRealPart();
 }
+
+ComplexNum sqrt(ComplexNum numToSquareroot) {
+    double magnitude = magnitudeOfNumber(numToSquareroot);
+    double angle = std::atan2(numToSquareroot.getImagPart(), numToSquareroot.getRealPart()) / 2.0;
+    return ComplexNum(std::sqrt(magnitude) * std::cos(angle), std::sqrt(magnitude) * std::sin(angle));
+}
+
+double getRealSign(ComplexNum num) {
+    if (num.getRealPart() >= 0) {
+        return 1;
+    } else{
+        return -1;
+    }
+}
