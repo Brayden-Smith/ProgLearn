@@ -124,6 +124,7 @@ int main() {
 
     Matrix wantEigenvalues(3, 3);
 
+    /*
     wantEigenvalues(0, 0) = 6;
     wantEigenvalues(1, 0) = 2;
     wantEigenvalues(2, 0) = 1;
@@ -133,6 +134,17 @@ int main() {
     wantEigenvalues(0, 2) = 1;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 1;
+     */
+
+    wantEigenvalues(0, 0) = 1;
+    wantEigenvalues(1, 0) = 3;
+    wantEigenvalues(2, 0) = 2;
+    wantEigenvalues(0, 1) = 2;
+    wantEigenvalues(1, 1) = 2;
+    wantEigenvalues(2, 1) = 1;
+    wantEigenvalues(0, 2) = 3;
+    wantEigenvalues(1, 2) = 1;
+    wantEigenvalues(2, 2) = 3;
 
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
@@ -154,6 +166,7 @@ int main() {
     std::cout<< "\nExpected value: " << expectedValue(&E) << std::endl;
 
     //covariance matrix test
+    /*
     Matrix covariance(4,3);
     covariance(0,0) = ComplexNum(1, 0);
     covariance(1,0) = ComplexNum(1, 0);
@@ -169,5 +182,6 @@ int main() {
     covariance(3,2) = ComplexNum(0, 0);
     covariance = covarianceMatrix(&covariance);
     std::cout << covariance;
+     */
 
 }

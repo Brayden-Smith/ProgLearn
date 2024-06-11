@@ -474,12 +474,29 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
 
 
     while (!akIsUpperTriangular) {
+
+        Matrix subMatrix(2,2);
+        int numRows = matrix->getNumRows();
+        subMatrix(0, 0) = (*matrix)(numRows - 2, numRows - 2);
+        subMatrix(1, 0) = (*matrix)(numRows - 1, numRows - 2);
+        subMatrix(0, 1) = (*matrix)(numRows - 2, numRows - 1);
+        subMatrix(1, 1) = (*matrix)(numRows - 1, numRows - 1);
+
+        ComplexNum shift = mu(&subMatrix);
+
+        Matrix identity = identityMatrix(matrix->getNumRows());
+        matrixToIterate = matrixToIterate - (shift * identity);
+
+
         std::cout << "Matrix to iterate:\n" << matrixToIterate << std::endl;
         std::vector<Matrix> currentQR = QRDecomp(matrixToIterate);
         std::cout << "Q is:\n" << currentQR[0] << std::endl;
         std::cout << "R is:\n" << currentQR[1] << std::endl;
         matrixToIterate = matMul(&currentQR[1], &currentQR[0]);
         //std::cout << matrixToIterate << std::endl;
+
+
+        matrixToIterate = matrixToIterate + (shift * identity);
 
         // Check if matrixToIterate is upper triangular
         akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
