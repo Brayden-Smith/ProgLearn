@@ -190,4 +190,12 @@ Matrix operator*(double numToMul, Matrix const& matrix) {
     return matrixToReturn;
 }
 
+Matrix Matrix::conjugate() const {
+    Matrix conjugate(this->numRows,1);
+    for(int i = 0; i < this->numRows; i++) {
+        conjugate(i,0) = this->entryData[i][0].getConjugate();
+    }
+    return conjugate;
+}
+
 

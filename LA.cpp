@@ -323,7 +323,7 @@ Matrix identityMatrix(int dim) {
     return I;
 }
 
-Matrix frontFillVec(Matrix M, int dim, ComplexNum Fill) {
+Matrix frontFillVec(Matrix M, int dim, ComplexNum const& Fill) {
     if(M.getNumCols() > 1 || dim < 1 || dim < M.getNumCols()) {
         throw std::invalid_argument("frontFillVec: Invalid input");
     }
@@ -369,7 +369,7 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel) {
     return Minor;
 }
 
-Matrix householderTransform(Matrix* x) {
+Matrix householderReflection(Matrix* x) {
     if (x->getNumCols() > 1) {
         throw std::invalid_argument("householderTransform: Invalid input");
     }
@@ -379,7 +379,7 @@ Matrix householderTransform(Matrix* x) {
     return y;
 }
 
-std::vector<Matrix> QRDecomp(Matrix A) {
+std::vector<Matrix> QRDecomp(Matrix const& A) {
 
     Matrix R = A;
     std::vector<Matrix> HTransforms;
@@ -391,7 +391,7 @@ std::vector<Matrix> QRDecomp(Matrix A) {
 
         //get transformation on column
         Matrix a = R[0];
-        Matrix v = householderTransform(&a);
+        Matrix v = householderReflection(&a);
         Matrix vT = conjTranspose(&v);
 
 
@@ -425,17 +425,6 @@ std::vector<Matrix> QRDecomp(Matrix A) {
         R = matMul(&HTransforms[i],&R);
     }
     return {Q,R};
-}
-
-bool isUpperTriangular(Matrix* mat) {
-    for (int i = 0; i < mat->getNumCols(); ++i) {
-        for (int j = i + 1; j < mat->getNumRows(); ++j) {
-            if (magnitudeOfNumber((*mat)(j, i)) > 1e-9) {
-                return false;
-            }
-        }
-    }
-    return true;
 }
 
 
@@ -481,5 +470,34 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     }
 
     return vectorOfEigenvalues;
+
+}
+
+//assumes all values in the matrix have uniform weight (add another functions that uses weight vector??)
+ComplexNum expectedValue(Matrix* Z) {
+    if(Z->getNumCols() > 1) {
+        throw std::invalid_argument("expectedValue: Not a complex random variable");
+    }
+
+    ComplexNum E(0,0);
+    for(int i = 0; i < Z->getNumRows(); i++) {
+        E += (*Z)(i,0);
+    }
+    E = E * (1.0/(Z->getNumRows()));
+    return E;
+}
+
+ComplexNum covariance(Matrix* Z, Matrix* W) {
+    Matrix conjW = W->conjugate();
+    Matrix ZconjW = matMul(Z,&conjW);
+    ComplexNum EZconjW = expectedValue(&ZconjW);
+
+    ComplexNum EZ = expectedValue(Z);
+    ComplexNum EW = expectedValue(W);
+
+    return EZconjW - (EZ * EW);
+}
+
+Matrix covarianceMatrix(Matrix* M) {
 
 }

@@ -23,9 +23,14 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel);
 double VectorNorm(Matrix* pointerToMatrix);
 Matrix unitVector(int k, int dim);
 Matrix identityMatrix(int dim);
-Matrix frontFillVec(Matrix M, int dim, ComplexNum Fill);
-Matrix householderTransform(Matrix* x);
-std::vector<Matrix> QRDecomp(Matrix A);
+Matrix frontFillVec(Matrix M, int dim, ComplexNum const& Fill);
+Matrix householderReflection(Matrix* x);
+std::vector<Matrix> QRDecomp(Matrix const& A);
+
+
+ComplexNum expectedValue(Matrix* Z);
+ComplexNum covariance(Matrix* Z, Matrix* W);
+Matrix covarianceMatrix(Matrix* M);
 
 bool isUpperTriangular(Matrix* mat);
 std::vector<ComplexNum> eigenvalues(Matrix* matrix);

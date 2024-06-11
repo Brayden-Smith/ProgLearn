@@ -46,4 +46,6 @@ public:
 
     friend std::ostream& operator<<(std::ostream& outputStream, const Matrix& matrixToPrint);
 
+    Matrix conjugate() const;
+
 };
