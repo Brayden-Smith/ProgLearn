@@ -441,14 +441,29 @@ bool isUpperTriangular(Matrix* mat) {
 
 ComplexNum mu(Matrix* matrix) {
     ComplexNum delta = ((*matrix)(0, 0) - (*matrix)(1, 1))/2;
-    //double radicalMult = sqrt((delta * delta) + )
+    ComplexNum radicalMult = sqrt((delta * delta) + ((*matrix)(0, 1)) * ((*matrix)(1, 0)));
 
-    return ComplexNum(0, 0);
+    double sign;
+    if (delta.getRealPart() >= 0) {
+        sign = 1;
+    } else {
+        sign = -1;
+    }
+
+    ComplexNum WilkinsonShift = delta - ((sign) * radicalMult);
+
+    return WilkinsonShift;
 }
 
 std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     if (matrix->getNumRows() != matrix->getNumCols()) {
         throw std::invalid_argument("eigenvalues: matrix must be n x n!");
+    }
+
+    if (matrix->getNumCols() == 1 && matrix->getNumRows() == 1) { // Trivial case
+        std::vector<ComplexNum> ret;
+        ret.push_back(ComplexNum((*matrix)(0, 0)));
+        return ret;
     }
 
     Matrix matrixToIterate = (*matrix);

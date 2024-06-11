@@ -123,6 +123,7 @@ int main() {
     // Eigenvalues test
 
     Matrix wantEigenvalues(3, 3);
+
     wantEigenvalues(0, 0) = 6;
     wantEigenvalues(1, 0) = 2;
     wantEigenvalues(2, 0) = 1;
@@ -132,6 +133,7 @@ int main() {
     wantEigenvalues(0, 2) = 1;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 1;
+
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
 
