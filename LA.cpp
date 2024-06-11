@@ -508,6 +508,7 @@ ComplexNum expectedValue(Matrix* Z) {
 ComplexNum covariance(Matrix* Z, Matrix* W) {
     Matrix conjW = W->conjugate();
     Matrix ZconjW = matMul(Z,&conjW);
+
     ComplexNum EZconjW = expectedValue(&ZconjW);
 
     ComplexNum EZ = expectedValue(Z);
@@ -517,5 +518,13 @@ ComplexNum covariance(Matrix* Z, Matrix* W) {
 }
 
 Matrix covarianceMatrix(Matrix* M) {
-
+    Matrix covarianceMatrix(M->getNumRows(),M->getNumRows());
+    for(int i = 0; i < M->getNumRows(); i++){
+        for(int j = 0; j < M->getNumRows(); j++) {
+            Matrix Zi = (*M)(i);
+            Matrix Zj = (*M)(j);
+            covarianceMatrix(i,j) = covariance(&Zi,&Zj);
+        }
+    }
+    return covarianceMatrix;
 }

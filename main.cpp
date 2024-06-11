@@ -142,5 +142,30 @@ int main() {
         std::cout << eigens[i] << std::endl;
     }
 
+    //expected value test
+    Matrix E(5,1);
+    E(0,0) = ComplexNum(5,0);
+    E(1,0) = ComplexNum(2,0);
+    E(2,0) = ComplexNum(3,0);
+    E(3,0) = ComplexNum(2,0);
+    E(4,0) = ComplexNum(1,0);
+    std::cout<< "\nExpected value: " << expectedValue(&E) << std::endl;
+
+    //covariance matrix test
+    Matrix covariance(4,3);
+    covariance(0,0) = ComplexNum(1, 0);
+    covariance(1,0) = ComplexNum(1, 0);
+    covariance(2,0) = ComplexNum(1, 0);
+    covariance(3,0) = ComplexNum(1, 0);
+    covariance(0,1) = ComplexNum(-1, 0);
+    covariance(1,1) = ComplexNum(4, 0);
+    covariance(2,1) = ComplexNum(4, 0);
+    covariance(3,1) = ComplexNum(-1, 0);
+    covariance(0,2) = ComplexNum(4, 0);
+    covariance(1,2) = ComplexNum(-2, 0);
+    covariance(2,2) = ComplexNum(2, 0);
+    covariance(3,2) = ComplexNum(0, 0);
+    covariance = covarianceMatrix(&covariance);
+    std::cout << covariance;
 
 }

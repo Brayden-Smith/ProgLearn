@@ -128,6 +128,7 @@ Matrix Matrix::operator()(int n) const {
     for(int i = 0; i < this->numCols; i++) {
         result(0,i) = this->entryData[n][i];
     }
+    return result;
 }
 
 //Row mutator

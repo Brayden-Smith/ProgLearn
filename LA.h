@@ -5,7 +5,10 @@
 
 
 void thresholdStabilize(Matrix* matrixToStabilize);
+
 Matrix matMul(Matrix* lhs, Matrix* rhs);
+Matrix hadamardProduct(Matrix* rhs, Matrix* lhs);
+
 double realTraceOfMatrix(Matrix* matrixToTrace);
 Matrix conjTranspose (Matrix* matrixToTranspose);
 Matrix transpose (Matrix* matrixToTranspose);
@@ -27,10 +30,9 @@ Matrix frontFillVec(Matrix M, int dim, ComplexNum const& Fill);
 Matrix householderReflection(Matrix* x);
 std::vector<Matrix> QRDecomp(Matrix const& A);
 
+bool isUpperTriangular(Matrix* mat);
+std::vector<ComplexNum> eigenvalues(Matrix* matrix);
 
 ComplexNum expectedValue(Matrix* Z);
 ComplexNum covariance(Matrix* Z, Matrix* W);
 Matrix covarianceMatrix(Matrix* M);
-
-bool isUpperTriangular(Matrix* mat);
-std::vector<ComplexNum> eigenvalues(Matrix* matrix);
