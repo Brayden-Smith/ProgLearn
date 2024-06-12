@@ -93,7 +93,7 @@ double frobeniusNorm(Matrix* matrixToNorm) {
     return sqrt(trace);
 }
 
-ComplexNum InnerProduct(Matrix& u, Matrix& v) {
+ComplexNum innerProduct(Matrix& u, Matrix& v) {
     if (u.getNumCols() != 1 || v.getNumCols() != 1) {
         throw std::invalid_argument("InnerProduct: Vectors must be nx1 matrices");
     }
@@ -104,6 +104,16 @@ ComplexNum InnerProduct(Matrix& u, Matrix& v) {
         result += (u(i, 0) * vEntryConjugate);
     }
     return result;
+}
+
+ComplexNum mean(Matrix& u) {
+    ComplexNum mean(0,0);
+    for(int i = 0; i < u.getNumRows(); i++) {
+        for(int j = 0; j < u.getNumCols(); j++) {
+            mean += u(i,j);
+        }
+    }
+    return (mean / (u.getNumCols() * u.getNumRows()));
 }
 
 
@@ -137,8 +147,8 @@ Matrix GramSchmidt(Matrix const& M) {
         for(int j = 0; j < i; j++) {
 
             Matrix Un = result[j];
-            ComplexNum VdotU = InnerProduct(Vk,Un);
-            ComplexNum UdotU = InnerProduct(Un,Un);
+            ComplexNum VdotU = innerProduct(Vk,Un);
+            ComplexNum UdotU = innerProduct(Un,Un);
 
             //compute the projection
             ComplexNum quotient = (VdotU / UdotU);
@@ -412,7 +422,7 @@ std::vector<Matrix> QRDecomp(Matrix const& A) {
 
         //get the transformation on the matrix
         Matrix H = identityMatrix(R.getNumRows());
-        H = H - ((ComplexNum(2,0) / InnerProduct(v,v) * (matMul(&v,&vT)) ));
+        H = H - ((ComplexNum(2,0) / innerProduct(v,v) * (matMul(&v,&vT)) ));
         HTransforms.push_back(H);
 
         R = matMul(&H,&R);
@@ -639,19 +649,20 @@ ComplexNum covariance(Matrix* Z, Matrix* W) {
 }
 
 Matrix covarianceMatrix(Matrix* M) {
-    Matrix covarianceMatrix(M->getNumRows(),M->getNumRows());
-    for(int i = 0; i < M->getNumRows(); i++){
-        for(int j = 0; j < M->getNumRows(); j++) {
-            //compute each component of entry
-            Matrix Zi = (*M)(i);
-            Matrix Zj = (*M)(j);
-            Zi = Zi - expectedValue(&Zi);
-            Zj = (Zj - expectedValue(&Zj)).conjugate();
+    Matrix covarianceMatrix(M->getNumRows(),M->getNumCols());
 
-            //set Zi to product to save memory
-            Zi = hadamardProduct(&Zi,&Zj);
-            covarianceMatrix(i,j) = expectedValue(&Zi);
-        }
+    //compute mean of each column and subtract to center
+
+    for(int i = 0; i < M->getNumCols(); i++) {
+        Matrix column = (*M)[i];
+        ComplexNum Mean = mean(column);
+
+        Matrix centered = column - Mean;
+        covarianceMatrix.columnAssign(i,&centered);
     }
+
+    Matrix adjoint = conjTranspose(&covarianceMatrix);
+    std::cout<< covarianceMatrix << std::endl << adjoint;
+    covarianceMatrix = matMul(&adjoint,&covarianceMatrix) / ComplexNum((M->getNumCols() - 1)*2,0) ;
     return covarianceMatrix;
 }

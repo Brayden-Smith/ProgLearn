@@ -52,8 +52,7 @@ int main() {
     D(1,1) = 1;
     D(2, 1) = -6;
     D(2,2) = 1;
-    auto meme = D[1];
-    auto G = GramSchmidt(D);
+
     //std::cout << ComplexNum(-4, -4) << std::endl;
 
     Matrix Fill(2,1);
@@ -62,6 +61,7 @@ int main() {
     //auto t = frontFillVec(Fill,5,ComplexNum(5,5));
     //std::cout << t;
 
+    /*
     Matrix matrixToDecomp(4, 3);
     matrixToDecomp(0,0) = ComplexNum(1, 0);
     matrixToDecomp(1,0) = ComplexNum(1, 0);
@@ -78,9 +78,9 @@ int main() {
     //std::cout << "the Q of QR Decomposition\n" << QRDecomp(matrixToDecomp)[0];
     //std::cout << "Matrix to decomp\n" << matrixToDecomp;
     //std::cout << "The R of QR decomp\n" << QRDecomp(matrixToDecomp)[1];
+    */
 
 
-    /*
     Matrix xData(6, 1);
     xData(0, 0) = 2;
     xData(1, 0) = 7;
@@ -98,17 +98,6 @@ int main() {
     yData(4, 0) = -3;
     yData(5, 0) = -7;
 
-    yData(0, 0) = 2;
-    yData(1, 0) = 4;
-    yData(2, 0) = 5;
-    yData(3, 0) = 4;
-    yData(4, 0) = 5;
-    yData(5, 0) = 7;
-    yData(6, 0) = 8;
-    yData(7, 0) = 8;
-    yData(8, 0) = 10;
-    yData(9, 0) = 12;
-     */
 
 
     // OLS regression test
@@ -168,38 +157,38 @@ int main() {
 
 
     //covariance test
-    Matrix xData(4,1);
-    xData(0,0) = ComplexNum(1,0);
-    xData(1,0) = ComplexNum(-1,0);
-    xData(2,0) = ComplexNum(4,0);
-    xData(3,0) = ComplexNum(0,0);
-    Matrix yData(4,1);
-    yData(0,0) = ComplexNum(1,0);
-    yData(1,0) = ComplexNum(-1,0);
-    yData(2,0) = ComplexNum(4,0);
-    yData(3,0) = ComplexNum(0,0);
-    //std::cout<<covariance(&xData,&yData);
+    Matrix x2Data(4,1);
+    x2Data(0,0) = ComplexNum(1,0);
+    x2Data(1,0) = ComplexNum(-1,0);
+    x2Data(2,0) = ComplexNum(4,0);
+    x2Data(3,0) = ComplexNum(0,0);
+    Matrix y2Data(4,1);
+    y2Data(0,0) = ComplexNum(1,0);
+    y2Data(1,0) = ComplexNum(-1,0);
+    y2Data(2,0) = ComplexNum(4,0);
+    y2Data(3,0) = ComplexNum(0,0);
+    //std::cout<<covariance(&x2Data,&y2Data);
 
 
 
     //covariance matrix test
-    /*
+
     Matrix covariance(4,3);
-    covariance(0,0) = ComplexNum(1, 0);
+    covariance(0,0) = ComplexNum(-3, 0);
     covariance(1,0) = ComplexNum(1, 0);
     covariance(2,0) = ComplexNum(1, 0);
-    covariance(3,0) = ComplexNum(1, 0);
-    covariance(0,1) = ComplexNum(-1, 0);
-    covariance(1,1) = ComplexNum(4, 0);
-    covariance(2,1) = ComplexNum(4, 0);
-    covariance(3,1) = ComplexNum(-1, 0);
-    covariance(0,2) = ComplexNum(4, 0);
-    covariance(1,2) = ComplexNum(-2, 0);
-    covariance(2,2) = ComplexNum(2, 0);
-    covariance(3,2) = ComplexNum(0, 0);
+    covariance(3,0) = ComplexNum(-4, 0);
+    covariance(0,1) = ComplexNum(-3, 0);
+    covariance(1,1) = ComplexNum(-1, 0);
+    covariance(2,1) = ComplexNum(8, 0);
+    covariance(3,1) = ComplexNum(8, 0);
+    covariance(0,2) = ComplexNum(-2, 0);
+    covariance(1,2) = ComplexNum(1, 0);
+    covariance(2,2) = ComplexNum(3, 0);
+    covariance(3,2) = ComplexNum(-3, 0);
     covariance = covarianceMatrix(&covariance);
     std::cout << covariance;
-     */
+
 
 
 

@@ -16,11 +16,16 @@ public:
 
     //Arithmetic operators
     Matrix operator + (Matrix const& matrixToAdd) const;
+
     Matrix operator *(ComplexNum const& scalar);
     Matrix operator *(double numToMul);
     friend Matrix operator*(ComplexNum const& scalar, Matrix const& matrix);
     friend Matrix operator*(double numToMul, Matrix const& matrix);
+
+    Matrix operator /(ComplexNum const& numToDiv);
+
     Matrix operator -(Matrix const& matrixToSub) const;
+    Matrix operator -(ComplexNum const& numToSub) const;
 
 
     //Equality operators

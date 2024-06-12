@@ -45,6 +45,15 @@ Matrix Matrix::operator*(double numToMul) {
     return matrixToReturn;
 }
 
+Matrix Matrix::operator /(ComplexNum const& numToDiv) {
+    Matrix matrixToReturn(this->numRows, this->numRows);
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            matrixToReturn.entryData[i][j] = this->entryData[i][j] / numToDiv;
+        }
+    }
+    return matrixToReturn;
+}
 
 Matrix Matrix::operator -(Matrix const& matrixToSub) const {
     if (this->numRows != matrixToSub.numRows || this->numCols != matrixToSub.numCols) {
@@ -136,7 +145,7 @@ Matrix Matrix::operator()(int n) const {
         throw std::invalid_argument("Matrix::operator(): Index out of bounds");
     }
 
-    Matrix result(1,this->numRows);
+    Matrix result(1,this->numCols);
     for(int i = 0; i < this->numCols; i++) {
         result(0,i) = this->entryData[n][i];
     }

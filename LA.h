@@ -13,7 +13,10 @@ double realTraceOfMatrix(Matrix* matrixToTrace);
 Matrix conjTranspose (Matrix* matrixToTranspose);
 Matrix transpose (Matrix* matrixToTranspose);
 double frobeniusNorm(Matrix* matrixToNorm);
-ComplexNum InnerProduct(Matrix& u, Matrix& v);
+
+ComplexNum innerProduct(Matrix& u, Matrix& v);
+ComplexNum mean(Matrix& u);
+
 void normalizeVectorsInMatrix(Matrix* pointerToMatrix);
 Matrix GramSchmidt(Matrix const& M);
 Matrix createAugmentedMatrix(Matrix* matrixA, Matrix* matrixB);
