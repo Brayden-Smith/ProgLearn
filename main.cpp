@@ -112,19 +112,20 @@ int main() {
 
 
     // OLS regression test
-    //LinearRegressor linreg1(&xData, &yData);
+    LinearRegressor linreg1(&xData, &yData);
     //std::cout << "Error is: " << linreg1.getError() << std::endl;
     Matrix testData(1, 1);
     testData(0, 0) = 825;
-    //ComplexNum prediction = linreg1.predict(&testData);
-    //std::cout << "Prediction is " << prediction << std::endl;
-    //Matrix regressionCoeff = linreg1.getRegressionCoefficients();
+    ComplexNum prediction = linreg1.predict(&testData);
+    //@std::cout << "Prediction is " << prediction << std::endl;
+    Matrix regressionCoeff = linreg1.getRegressionCoefficients();
     //std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
 
     // Eigenvalues test
 
     Matrix wantEigenvalues(3, 3);
 
+    /*
     wantEigenvalues(0, 0) = 6;
     wantEigenvalues(1, 0) = 2;
     wantEigenvalues(2, 0) = 1;
@@ -134,15 +135,26 @@ int main() {
     wantEigenvalues(0, 2) = 1;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 1;
+     */
+
+    wantEigenvalues(0, 0) = 1;
+    wantEigenvalues(1, 0) = 3;
+    wantEigenvalues(2, 0) = 2;
+    wantEigenvalues(0, 1) = 2;
+    wantEigenvalues(1, 1) = 2;
+    wantEigenvalues(2, 1) = 1;
+    wantEigenvalues(0, 2) = 3;
+    wantEigenvalues(1, 2) = 1;
+    wantEigenvalues(2, 2) = 3;
 
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
 
     std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
-    std::cout << "Eigenvalues" << std::endl;
-    std::cout << "eigens length is " << eigens.size() << std::endl;
+    //std::cout << "Eigenvalues" << std::endl;
+    //std::cout << "eigens length is " << eigens.size() << std::endl;
     for (int i = 0; i < eigens.size(); i++) {
-        std::cout << eigens[i] << std::endl;
+        //std::cout << eigens[i] << std::endl;
     }
 
     //expected value test
@@ -171,6 +183,7 @@ int main() {
 
 
     //covariance matrix test
+    /*
     Matrix covariance(4,3);
     covariance(0,0) = ComplexNum(1, 0);
     covariance(1,0) = ComplexNum(1, 0);
@@ -186,5 +199,54 @@ int main() {
     covariance(3,2) = ComplexNum(0, 0);
     covariance = covarianceMatrix(&covariance);
     std::cout << covariance;
+     */
 
+
+
+    // Logistic regression tests
+    //std::cout << "LOG REG\n" << std::endl;
+    Matrix logregx(7, 2);
+    logregx(0, 0) = 22;
+    logregx(1, 0) = 25;
+    logregx(2, 0) = 47;
+    logregx(3, 0) = 52;
+    logregx(4, 0) = 46;
+    logregx(5, 0) = 56;
+    logregx(6, 0) = 48;
+
+    logregx(0, 1) = 20000;
+    logregx(1, 1) = 35000;
+    logregx(2, 1) = 50000;
+    logregx(3, 1) = 45000;
+    logregx(4, 1) = 30000;
+    logregx(5, 1) = 60000;
+    logregx(6, 1) = 70000;
+
+    Matrix logregy(7, 1);
+    logregy(0, 0) = 0;
+    logregy(1, 0) = 0;
+    logregy(2, 0) = 1;
+    logregy(3, 0) = 1;
+    logregy(4, 0 ) = 0;
+    logregy(5, 0) = 1;
+    logregy(6, 0) = 1;
+
+    LinearRegressor linreg2(&logregx, &logregy);
+    //std::cout << "Ling reg coefficients for this dataset are:\n" << linreg2.getRegressionCoefficients() << std::endl;
+
+    OlsLogisticRegressor logreg;
+    logreg.fit(&logregx, &logregy);
+
+    Matrix xpred(2, 2);
+    xpred(0, 0) = 45;
+    xpred(0, 1) = 65000;
+    xpred(1, 0) = 23;
+    xpred(1, 1) = 60000;
+
+    Matrix ypred = logreg.predict(&xpred);
+    std::cout << "ypred is:\n" << ypred << std::endl;
+    //std::cout << "Regression coefficients are:\n" << logreg.getRegressionCoefficients() << std::endl;
+
+
+    std::vector<Matrix> John = singularValueDecomp(&wantEigenvalues);
 }

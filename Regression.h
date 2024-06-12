@@ -29,11 +29,23 @@ private:
     Matrix regressionCoefficients;
 };
 
+ComplexNum sigmoid (ComplexNum numberToSigmoid);
 
-class LogisticRegressor {
+void yDataProbTransform (Matrix* yDataToTransform);
+
+ComplexNum logit (ComplexNum prob);
+
+class OlsLogisticRegressor {
 public:
 
+    OlsLogisticRegressor();
+    void fit(Matrix* xData, Matrix* yData);
+    Matrix predict(Matrix* xDataToPred);
+    Matrix getRegressionCoefficients();
 
 
 private:
+    Matrix regressionCoefficients;
+    int numVars;
+    bool isFit;
 };

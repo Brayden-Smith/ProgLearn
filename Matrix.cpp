@@ -8,6 +8,8 @@ Matrix::Matrix(int nr, int nc) : numRows(nr), numCols(nc), entryData(nr, std::ve
 }
 Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {}
 
+Matrix::Matrix() : numRows(1), numCols(1) {}
+
 // Arithmetic operators
 Matrix Matrix::operator +(Matrix const& matrixToAdd) const {
     if (this->numRows != matrixToAdd.numRows || this->numCols != matrixToAdd.numCols) {
