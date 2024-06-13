@@ -236,6 +236,9 @@ int main() {
     std::cout << "ypred is:\n" << ypred << std::endl;
     //std::cout << "Regression coefficients are:\n" << logreg.getRegressionCoefficients() << std::endl;
 
+    std::cout << "Wanteigenvalues:\n" << wantEigenvalues << std::endl;
 
-    std::vector<Matrix> John = singularValueDecomp(&wantEigenvalues);
+    std::vector<ComplexNum> core;
+    std::vector<Matrix> Jacob = eigenvectors(&wantEigenvalues, core);
+    //std::vector<Matrix> John = singularValueDecomp(&wantEigenvalues);
 }

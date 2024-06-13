@@ -3,11 +3,13 @@
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
         for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
-            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-15) {
                 (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
+                //std::cout << "stab called";
             }
-            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-15) {
                 (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
+                //std::cout<< "stab called";
             }
 
         }
@@ -547,6 +549,86 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
     return vectorOfEigenvalues;
 
 }
+
+
+std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues) {
+
+    if (matrix->getNumRows() != matrix->getNumCols()) {
+        throw std::invalid_argument("eigenvalues: matrix must be n x n!");
+    }
+
+    if (matrix->getNumCols() == 1 && matrix->getNumRows() == 1) { // Trivial case
+        std::vector<Matrix> ret;
+        Matrix matret(1, 1);
+        matret(0, 0) = 1;
+        ret.push_back(matret);
+        return ret;
+    }
+
+    Matrix matrixToIterate = (*matrix);
+    // Check to see if matrix is already upper triangular
+
+    Matrix cumulativeQ = identityMatrix(matrix->getNumCols());
+
+    bool akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
+
+
+    while (!akIsUpperTriangular) {
+
+        Matrix subMatrix(2,2);
+        int numRows = matrix->getNumRows();
+        subMatrix(0, 0) = (*matrix)(numRows - 2, numRows - 2);
+        subMatrix(1, 0) = (*matrix)(numRows - 1, numRows - 2);
+        subMatrix(0, 1) = (*matrix)(numRows - 2, numRows - 1);
+        subMatrix(1, 1) = (*matrix)(numRows - 1, numRows - 1);
+
+        ComplexNum shift = mu(&subMatrix);
+
+        Matrix identity = identityMatrix(matrix->getNumRows());
+        matrixToIterate = matrixToIterate - (shift * identity);
+
+
+        std::vector<Matrix> currentQR = QRDecomp(matrixToIterate);
+        matrixToIterate = matMul(&currentQR[1], &currentQR[0]);
+
+        cumulativeQ = matMul(&cumulativeQ, &currentQR[0]);
+
+        matrixToIterate = matrixToIterate + (shift * identity);
+
+
+        // Check if matrixToIterate is upper triangular
+        akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
+    }
+    //std::cout << "akIsUpperTriangular and ak is:\n" << matrixToIterate << std::endl;
+
+    std::vector<Matrix> vectorOfEigenvectors; // Ordered numerically
+    std::vector<ComplexNum> vectorOfEigenvalues;
+    for (int i = 0; i < matrixToIterate.getNumCols(); i++) {
+        vectorOfEigenvalues.push_back( matrixToIterate(i, i));
+        vectorOfEigenvectors.push_back(cumulativeQ[i]);
+    }
+    normalizeVectorsInMatrix(&cumulativeQ);
+    std::cout << "Cumulative Q normed:\n" << cumulativeQ << std::endl;
+
+    Matrix col = cumulativeQ[1];
+    Matrix jacob = matMul(matrix, &col);
+
+    // Now sort by eigenvalue
+
+
+
+    return vectorOfEigenvectors;
+
+
+
+}
+
+
+
+
+
+
+
 
 std::vector<Matrix> singularValueDecomp(Matrix* matrix) {
     // The first step is to create an empty sigma matrix, as this part of the code finds the singular values and sigma

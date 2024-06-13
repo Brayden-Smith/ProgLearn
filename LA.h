@@ -35,6 +35,8 @@ std::vector<Matrix> QRDecomp(Matrix const& A);
 
 bool isUpperTriangular(Matrix* mat);
 std::vector<ComplexNum> eigenvalues(Matrix* matrix);
+void orthogonalize(Matrix* Q);
+std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues);
 std::vector<Matrix> singularValueDecomp(Matrix* matrix);
 
 
