@@ -3,11 +3,11 @@
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
         for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
-            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-15) {
+            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-9) {
                 (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
                 //std::cout << "stab called";
             }
-            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-15) {
+            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-9) {
                 (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
                 //std::cout<< "stab called";
             }
@@ -551,7 +551,7 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
 }
 
 
-std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues) {
+std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues) { // Only works for real eigenvalues
 
     if (matrix->getNumRows() != matrix->getNumCols()) {
         throw std::invalid_argument("eigenvalues: matrix must be n x n!");
@@ -571,7 +571,6 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
     Matrix cumulativeQ = identityMatrix(matrix->getNumCols());
 
     bool akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
-
 
     while (!akIsUpperTriangular) {
 
@@ -595,8 +594,8 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
 
         matrixToIterate = matrixToIterate + (shift * identity);
 
-
         // Check if matrixToIterate is upper triangular
+        cumulativeQ = GramSchmidt(cumulativeQ);
         akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
     }
     //std::cout << "akIsUpperTriangular and ak is:\n" << matrixToIterate << std::endl;
@@ -607,17 +606,51 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
         vectorOfEigenvalues.push_back( matrixToIterate(i, i));
         vectorOfEigenvectors.push_back(cumulativeQ[i]);
     }
-    normalizeVectorsInMatrix(&cumulativeQ);
-    std::cout << "Cumulative Q normed:\n" << cumulativeQ << std::endl;
 
-    Matrix col = cumulativeQ[1];
-    Matrix jacob = matMul(matrix, &col);
+
 
     // Now sort by eigenvalue
+    //std::cout << "cum q:\n" << cumulativeQ << std::endl;
 
 
+    std::vector<Matrix> orderedEigenvectors;
+    std::vector<ComplexNum> orderedEigenvalues;
+    int vecLength = vectorOfEigenvalues.size();
 
-    return vectorOfEigenvectors;
+
+    for (int i = 0; i < vecLength; i++) {
+
+        double max = magnitudeOfNumber(vectorOfEigenvalues[0]);
+        ComplexNum maxEigenVal = vectorOfEigenvalues[0];
+        int maxPos = 0;
+        for (int j = 0; j < vectorOfEigenvalues.size(); j++) {
+            //std::cout << "Vector of eigenvalues size is: " << vectorOfEigenvalues.size() << std::endl;
+
+            if (magnitudeOfNumber(vectorOfEigenvalues[j]) > max) {
+                max = magnitudeOfNumber(vectorOfEigenvalues[j]);
+                maxPos = j;
+                maxEigenVal = vectorOfEigenvalues[j];
+            }
+        }
+
+        orderedEigenvalues.push_back(maxEigenVal);
+        orderedEigenvectors.push_back(vectorOfEigenvectors[maxPos]);
+
+        vectorOfEigenvalues.erase(vectorOfEigenvalues.begin() + maxPos);
+        vectorOfEigenvectors.erase(vectorOfEigenvectors.begin() + maxPos);
+    }
+
+    // We now have two matching vectors ordered from largest eigenvalue to smallest.
+
+    /*
+    for (int i = 0; i < orderedEigenvalues.size(); i++) {
+        std::cout << orderedEigenvalues[i] << std::endl;
+        std::cout << orderedEigenvectors[i] << std::endl;
+    }
+    */
+
+    correspondingEigenValues = orderedEigenvalues;
+    return orderedEigenvectors;
 
 
 
@@ -667,35 +700,105 @@ std::vector<Matrix> singularValueDecomp(Matrix* matrix) {
 
     // We now proceed to construct V
 
-    std::vector<Matrix> vectorsInV;
-
-    for (int i = singularVals.size() - 1; i >= 0; i--) {
-        Matrix vectorOfZeros(matrix->getNumCols(), 1);
-        Matrix characteristicMatrix = ATA - (eigenvals[i] * identityMatrix(ATA.getNumRows()));
-        //std::cout << "ATA:\n" << ATA << std::endl;
-        //std::cout << "characteristic matrix:\n" << characteristicMatrix << std::endl;
-
-        //Matrix eigenVector = gaussianElimination(&characteristicMatrix, &vectorOfZeros);
-
-        //normalizeVectorsInMatrix(&eigenVector);
-
-        //vectorsInV.push_back(eigenVector);
-
-        // todo find different algorithm for eigenvector computation
-    }
+    std::vector<ComplexNum> corresEigensV;
+    std::vector<Matrix> vectorsInV = eigenvectors(&ATA, corresEigensV);
 
     Matrix V(matrix->getNumCols(), matrix->getNumCols());
     for (int i = 0; i < vectorsInV.size(); i++) {
-        V[i] = vectorsInV[i];
+        for (int j = 0; j < V.getNumRows(); j++) {
+            V(j, i) = (vectorsInV[i])(j, 0);
+        }
     }
 
     //std::cout << "V:\n" << V << std::endl;
 
 
+    // Now to construct U
+    std::vector<ComplexNum> corresEigensU;
+    std::vector<Matrix> vectorsInU = eigenvectors(&AAT, corresEigensU);
+
+
+    Matrix U(matrix->getNumRows(), matrix->getNumRows());
+    for (int i = 0; i < vectorsInU.size(); i++) {
+        //U[i] = vectorsInU[i];
+        //std::cout << "here?" << std::endl;
+        for (int j = 0; j < U.getNumRows(); j++) {
+            //kstd::cout << "accessing (" << j << "," << i << ")" << std::endl;
+            U(j, i) = (vectorsInU[i])(j, 0);
+        }
+    }
+
+    // Run algorithm for partial reconstruction and adjust signs
+
+
+    /*
+    for (int i = 0; i < sigma.getNumRows(); i++) {
+
+        Matrix rightSide = VTranpose(i);
+        Matrix leftSide = U[i];
+        Matrix partialReconstruction = matMul(&rightSide, &leftSide) * sigma(i, i);
+
+
+        Matrix errorEst1 = (partialReconstruction - (matMul(&rightSide, &leftSide) * sigma(i, i)));
+        Matrix errorEst2 = (-1 * partialReconstruction - (matMul(&rightSide, &leftSide) * sigma(i, i)));
+        //Matrix errorEst3 =
+
+        double errorOriginal = frobeniusNorm(&errorEst1);
+        double errorFlipped = frobeniusNorm(&errorEst2);
+
+        if (errorFlipped < errorOriginal) { // Needs generealization
+            U[i] = U[i] * -1;
+        }
+
+    }
+
+     */
+
+    // These are rough drafts of various sign-flipping algorithms. Do not delete them; these algorihms might prove useful in the future if the dot product algorithm turns out to not be robust
+
+    /*
+    Matrix Sigma_inv(matrix->getNumCols(), matrix->getNumCols());
+    for (int i = 0; i < matrix->getNumCols(); ++i) {
+        if (sigma(i, i).getRealPart() != 0) { // Assuming ComplexNum has a member 'real'
+            Sigma_inv(i, i) = 1.0 / sigma(i, i).getRealPart(); // Assuming ComplexNum supports double division
+        }
+    }
+
+
+    Matrix temp = matMul(&V, &Sigma_inv);
+    U = matMul(matrix, &temp);
+    //U = A * V * Sigma_inv;
+     */
+
+
+    int colMin = V.getNumCols();
+    if (U.getNumCols() < colMin) {
+        colMin = U.getNumCols();
+    }
+
+    for (int i = 0; i < colMin; i++) {
+        Matrix col = V[i];
+        Matrix Av = matMul(matrix, &col);
+        Matrix uCol = U[i];
+        ComplexNum dotprodascnum = innerProduct(uCol, Av);
+        double dotprod = dotprodascnum.getRealPart();
+
+        if (dotprod < 0) {
+             Matrix uColFlipped = -1 * uCol;
+             for (int j = 0; j < uColFlipped.getNumRows(); j++) {
+                 U(j, i) = uColFlipped(j, 0);
+             }
+        }
+    };
 
 
 
-    decompToReturn.push_back(identityMatrix(3));
+    Matrix VTranpose = transpose(&V);
+    decompToReturn.push_back(U);
+    decompToReturn.push_back(sigma);
+    decompToReturn.push_back(VTranpose);
+
+
     return decompToReturn;
 }
 
@@ -744,7 +847,7 @@ Matrix covarianceMatrix(Matrix* M) {
     }
 
     Matrix adjoint = conjTranspose(&covarianceMatrix);
-    std::cout<< covarianceMatrix << std::endl << adjoint;
+   // std::cout<< covarianceMatrix << std::endl << adjoint;
     covarianceMatrix = matMul(&adjoint,&covarianceMatrix) / ComplexNum((M->getNumCols() - 1)*2,0) ;
     return covarianceMatrix;
 }

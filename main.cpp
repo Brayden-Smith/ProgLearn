@@ -124,8 +124,8 @@ int main() {
     wantEigenvalues(0, 2) = 1;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 1;
-     */
-
+    */
+    /*
     wantEigenvalues(0, 0) = 1;
     wantEigenvalues(1, 0) = 3;
     wantEigenvalues(2, 0) = 2;
@@ -135,16 +135,32 @@ int main() {
     wantEigenvalues(0, 2) = 3;
     wantEigenvalues(1, 2) = 1;
     wantEigenvalues(2, 2) = 3;
+    */
+    wantEigenvalues(0, 0) = 1;
+    wantEigenvalues(1, 0) = 2;
+    wantEigenvalues(2, 0) = 3;
+    wantEigenvalues(0, 1) = 2;
+    wantEigenvalues(1, 1) = 4;
+    wantEigenvalues(2, 1) = 5;
+    wantEigenvalues(0, 2) = 3;
+    wantEigenvalues(1, 2) = 5;
+    wantEigenvalues(2, 2) = 6;
+
+    Matrix matToSVD(2, 3);
+    matToSVD(0, 0) = 1;
+    matToSVD(1, 0) = 4;
+    matToSVD(0, 1) = 2;
+    matToSVD(1, 1) = 5;
+    matToSVD(0, 2) = 3;
+    matToSVD(1, 2) = 6;
 
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
 
-    std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
+    //std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
     //std::cout << "Eigenvalues" << std::endl;
     //std::cout << "eigens length is " << eigens.size() << std::endl;
-    for (int i = 0; i < eigens.size(); i++) {
-        //std::cout << eigens[i] << std::endl;
-    }
+
 
     //expected value test
     Matrix E(1,5);
@@ -233,12 +249,21 @@ int main() {
     xpred(1, 1) = 60000;
 
     Matrix ypred = logreg.predict(&xpred);
-    std::cout << "ypred is:\n" << ypred << std::endl;
+    //std::cout << "ypred is:\n" << ypred << std::endl;
     //std::cout << "Regression coefficients are:\n" << logreg.getRegressionCoefficients() << std::endl;
 
-    std::cout << "Wanteigenvalues:\n" << wantEigenvalues << std::endl;
+    //std::cout << "Wanteigenvalues:\n" << wantEigenvalues << std::endl;
 
     std::vector<ComplexNum> core;
-    std::vector<Matrix> Jacob = eigenvectors(&wantEigenvalues, core);
-    //std::vector<Matrix> John = singularValueDecomp(&wantEigenvalues);
+    std::vector<Matrix> decomp = singularValueDecomp(&matToSVD);
+
+    std::cout << "Matrix to SVD:\n" << matToSVD << std::endl;
+
+    std::cout << "U:\n" << decomp[0] << std::endl;
+    std::cout << "Sigma:\n" << decomp[1] << std::endl;
+    std::cout << "V T:\n" << decomp[2] << std::endl;
+
+    Matrix intermed = matMul(&decomp[1], &decomp[2]);
+    Matrix originalMatrix = matMul(&decomp[0], &intermed);
+    std::cout << "Orig:\n" << originalMatrix << std::endl;
 }
