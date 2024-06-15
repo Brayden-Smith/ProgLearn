@@ -49,3 +49,11 @@ private:
     int numVars;
     bool isFit;
 };
+
+class RidgeRegressor {
+public:
+
+
+private:
+
+};

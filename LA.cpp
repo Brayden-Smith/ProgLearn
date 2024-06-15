@@ -663,6 +663,7 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
 
 
 
+
 std::vector<Matrix> singularValueDecomp(Matrix* matrix) {
     // The first step is to create an empty sigma matrix, as this part of the code finds the singular values and sigma
     std::vector<Matrix> decompToReturn;

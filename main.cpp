@@ -154,6 +154,8 @@ int main() {
     matToSVD(0, 2) = 3;
     matToSVD(1, 2) = 6;
 
+    matToSVD = transpose(&matToSVD);
+
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
 
