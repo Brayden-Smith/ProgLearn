@@ -4,6 +4,7 @@
 #include "LA.h"
 #include "ComplexNum.h"
 #include "Regression.h"
+#include "pngReader.h"
 
 int main() {
     // Complex number test asserts
@@ -268,4 +269,8 @@ int main() {
     Matrix intermed = matMul(&decomp[1], &decomp[2]);
     Matrix originalMatrix = matMul(&decomp[0], &intermed);
     std::cout << "Orig:\n" << originalMatrix << std::endl;
+
+    auto meme = png2MonoMatrix("PNG_transparency_demonstration_1.png");
+
+
 }
