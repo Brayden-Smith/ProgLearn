@@ -4,10 +4,11 @@
 #include "LA.h"
 #include "ComplexNum.h"
 #include "Regression.h"
-#include "pngReader.h"
+#include <opencv2/opencv.hpp>
+#include <windows.h>
 
 int main() {
-    // Complex number test asserts
+    // Complex number test
     ComplexNum z(3, 2);
     assert(z.getConjugate().getImagPart() == -2 );
     assert ((2+z).getRealPart() == 5);
@@ -270,7 +271,7 @@ int main() {
     Matrix originalMatrix = matMul(&decomp[0], &intermed);
     std::cout << "Orig:\n" << originalMatrix << std::endl;
 
-    auto meme = png2MonoMatrix("PNG_transparency_demonstration_1.png");
-
-
+    cv::Mat testMat = cv::Mat::zeros(3, 3, CV_8U);
+    std::cout << "Created OpenCV Mat: " << testMat << std::endl;
+    return 0;
 }

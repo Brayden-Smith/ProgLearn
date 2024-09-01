@@ -43,3 +43,5 @@ std::vector<Matrix> singularValueDecomp(Matrix* matrix);
 ComplexNum expectedValue(Matrix* Z);
 ComplexNum covariance(Matrix* Z, Matrix* W);
 Matrix covarianceMatrix(Matrix* M);
+
+Matrix littleCovariance(Matrix& matrix);

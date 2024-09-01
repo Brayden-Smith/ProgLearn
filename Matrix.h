@@ -1,7 +1,7 @@
 #pragma once
-#import "ComplexNum.h"
+#include "ComplexNum.h"
 #include <vector>
-#import <iostream>
+#include <iostream>
 
 class Matrix  {
 private:
