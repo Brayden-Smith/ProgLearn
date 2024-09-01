@@ -1,11 +1,15 @@
 #include "data.h"
 
+Matrix meanFlattenedFace(Matrix matrix);
+
 class FaceSpace {
 private:
     Matrix faceDatabase;
-    Matrix eigenFaces;
+    Matrix meanFace;
+    Matrix eigenFaceDatabase;
     long numFaces;
     unsigned int numEigenFaces;
+    int numOfTopEigenFaces;
 
     // For adding and removing faces (will come later)
     unsigned int numFacesAdded;
@@ -13,8 +17,8 @@ private:
 
 public:
     // Constructors
-    FaceSpace(std::string& path);
-    FaceSpace(Matrix faceMatrix);
+    FaceSpace(Matrix faceMatrix, double percentVariance); // The percentVariance parameter allows the user to select what percent of the variance of faces the eigenfaces should cover
+    FaceSpace(std::string& path, double percentVariance);
 
 
 

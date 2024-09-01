@@ -852,3 +852,11 @@ Matrix covarianceMatrix(Matrix* M) {
     covarianceMatrix = matMul(&adjoint,&covarianceMatrix) / ComplexNum((M->getNumCols() - 1)*2,0) ;
     return covarianceMatrix;
 }
+
+
+Matrix littleCovariance(Matrix& matrix) {
+    Matrix matrixTranspose = conjTranspose(&matrix);
+    Matrix product = matMul(&matrix, &matrixTranspose);
+    product = product * (1/(product.getNumRows()));
+    return product;
+}
