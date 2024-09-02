@@ -3,6 +3,52 @@
 #include <opencv2/opencv.hpp>
 #include <fstream>
 
+Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix) { // Converts a single-channel grayscale OpenCV matrix to a matrix object
+    if (CVMatrix.channels() != 1) {
+        throw std::invalid_argument("convertCVMatrixToMatrix: CVMatrix argument must only have one channel!");
+    }
+    if (CVMatrix.empty()) {
+        throw std::invalid_argument("convertCVMatrixToMatrix: Matrix is empty!");
+    }
+
+    int numRows = CVMatrix.rows;
+    int numCols = CVMatrix.cols;
+    Matrix matrixToReturn(numRows, numCols);
+
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            double valueInCVMatrix = CVMatrix.at<uchar>(i, j);
+            ComplexNum CNumValue(valueInCVMatrix, 0);
+            matrixToReturn(i, j) = CNumValue;
+        }
+    }
+
+    return matrixToReturn;
+}
+
+
+cv::Mat convertMatrixToCVMatrix(Matrix& matrix) { // Converts a single-channel OpenCV matrix to a matrix object
+    int numRows = matrix.getNumRows();
+    int numCols = matrix.getNumCols();
+    cv::Mat matrixToReturn(numRows, numCols, CV_8U);
+
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            double realPart = matrix(i, j).getRealPart();
+            matrixToReturn.at<uchar>(i, j) = static_cast<uchar>(std::max(0.0, std::min(255.0, realPart)));
+        }
+    }
+
+    return matrixToReturn;
+}
+
+
+
+void displayImage(std::string& window, Matrix& matrixToDisplay) {
+    cv::Mat CVMat = convertMatrixToCVMatrix(matrixToDisplay);
+    cv::imshow(window, CVMat);
+    cv::waitKey(0);
+}
 
 Matrix flattenMatrix(Matrix& matrixToFlatten) {
     Matrix flattenedMatrix(matrixToFlatten.getNumRows() * matrixToFlatten.getNumCols(), 1);
@@ -50,35 +96,8 @@ std::vector<Matrix> trainTestSplit(Matrix& data, double percent) {
 }
 
 
-
-Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix) { // Converts a single-channel OpenCV matrix to a matrix object
-    if (CVMatrix.channels() != 1) {
-        throw std::invalid_argument("convertCVMatrixToMatrix: CVMatrix argument must only have one channel!");
-    }
-    if (CVMatrix.empty()) {
-        throw std::invalid_argument("convertCVMatrixToMatrix: Matrix is empty!");
-    }
-    if (CVMatrix.type() != CV_8U) {
-        throw std::invalid_argument("CVMatrix must be of type CV_8U (0-255)!");
-    }
-
-    int numRows = CVMatrix.rows;
-    int numCols = CVMatrix.cols;
-    Matrix matrixToReturn(numRows, numCols);
-
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; j < numCols; j++) {
-            double valueInCVMatrix = CVMatrix.at<uchar>(i, j);
-            ComplexNum CNumValue(valueInCVMatrix, 0);
-            matrixToReturn(i, j) = CNumValue;
-        }
-    }
-
-    return matrixToReturn;
-}
-
-
 Matrix importGrayscaleImage(const std::string& path) {
+    std::cout << "Trying to load image from: " << path << std::endl;
     cv::Mat CVImage = cv::imread(path, cv::IMREAD_GRAYSCALE); // Read the image from the given path in grayscale and return a cv matrix
 
     if (CVImage.empty()) {

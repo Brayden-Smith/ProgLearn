@@ -16,7 +16,6 @@ Matrix meanFlattenedFace(Matrix matrixOfFlattenedFaces) {
 }
 
 
-
 FaceSpace::FaceSpace(Matrix faceMatrix, double percentVariance) : faceDatabase(faceMatrix), meanFace(meanFlattenedFace(faceMatrix)), eigenFaceDatabase(1, 1), numFaces(faceMatrix.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
     ComplexNum percentVarianceCNum(percentVariance, 0);
     // Must now create the eigenfaces

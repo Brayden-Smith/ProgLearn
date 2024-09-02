@@ -6,8 +6,16 @@
 #include "Regression.h"
 #include <opencv2/opencv.hpp>
 #include <windows.h>
+#include "data.h"
+#include "eigenfaces.h"
+#include <filesystem>
 
 int main() {
+
+
+
+
+
     // Complex number test
     ComplexNum z(3, 2);
     assert(z.getConjugate().getImagPart() == -2 );
@@ -273,5 +281,15 @@ int main() {
 
     cv::Mat testMat = cv::Mat::zeros(3, 3, CV_8U);
     std::cout << "Created OpenCV Mat: " << testMat << std::endl;
-    return 0;
+
+
+    std::string path = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
+    Matrix image = importGrayscaleImage(path);
+    std::cout << "Num rows: " << image.getNumRows() << std::endl;
+    std::cout << "Num cols: " << image.getNumCols() << std::endl;
+
+    std::string hi = "Hello";
+    displayImage(hi, image);
+
+
 }
