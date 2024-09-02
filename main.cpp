@@ -286,8 +286,8 @@ int main() {
     std::string path = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
     Matrix image = importGrayscaleImage(path);
 
-    std::string hi = "Hello";
-    displayImage(hi, image);
+    std::string hello = "Hello";
+    displayImage(hello, image);
 
 
 }
