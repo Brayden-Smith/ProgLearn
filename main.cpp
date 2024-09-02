@@ -283,11 +283,16 @@ int main() {
     std::cout << "Created OpenCV Mat: " << testMat << std::endl;
 
 
-    std::string path = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
-    Matrix image = importGrayscaleImage(path);
+    //std::string path = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
+    //Matrix image = importGrayscaleImage(path);
+    //std::string hello = "Hello";
+    //displayImage(hello, image);
+    std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
+    std::vector<Matrix> images = importGrayscaleImageFamily(path);
 
-    std::string hello = "Hello";
-    displayImage(hello, image);
+    Matrix faceMatrix = vectorToMatrixOfMatrices(images);
+    std::cout << "Face matrix has " << faceMatrix.getNumRows() << " rows" << std::endl;
+    std::cout << "Face matrix has " << faceMatrix.getNumCols() << " cols" << std::endl;
 
 
 }

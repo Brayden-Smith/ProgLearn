@@ -78,14 +78,33 @@ FaceSpace::FaceSpace(Matrix faceMatrix, double percentVariance) : faceDatabase(f
 
 
 
-
-
-
-
-
 FaceSpace::FaceSpace(std::string& path, double percentVariance) : faceDatabase(Matrix(1, 1)), meanFace(Matrix(1,1)), eigenFaceDatabase(Matrix(1, 1)), numFaces(0), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
     // todo
 }
+
+
+
+
+long FaceSpace::getNumFaces() {
+    return numFaces;
+}
+
+unsigned int FaceSpace::getNumEigenFaces() {
+    return numEigenFaces;
+}
+
+unsigned int FaceSpace::getNumTopEigenFaces() {
+    return numOfTopEigenFaces;
+}
+
+unsigned int FaceSpace::getNumFacesAdded() {
+    return numFacesAdded;
+}
+
+unsigned int FaceSpace::getNumFacesRemoved() {
+    return numFacesRemoved;
+}
+
 
 
 
