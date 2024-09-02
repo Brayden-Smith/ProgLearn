@@ -285,8 +285,6 @@ int main() {
 
     std::string path = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
     Matrix image = importGrayscaleImage(path);
-    std::cout << "Num rows: " << image.getNumRows() << std::endl;
-    std::cout << "Num cols: " << image.getNumCols() << std::endl;
 
     std::string hi = "Hello";
     displayImage(hi, image);
