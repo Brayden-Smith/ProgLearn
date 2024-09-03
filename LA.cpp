@@ -396,17 +396,42 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel) {
     return Minor;
 }
 
-Matrix householderReflection(Matrix* x) {
+Matrix householderReflection(Matrix* x) { //todo stabilize
+
+
     if (x->getNumCols() > 1) {
         throw std::invalid_argument("householderTransform: Invalid input");
     }
-
     Matrix y = (*x)(0,0).sign() * VectorNorm(x) * unitVector(0,x->getNumRows());
     y = *x + y;
+    //std::cout << "y dims: " << y.getNumRows() << " x " << y.getNumCols() << std::endl;
     return y;
+
+
+    /*
+    if (x->getNumCols() > 1) {
+        throw std::invalid_argument("householderReflection: Invalid input");
+    }
+
+    // Calculate the norm of x
+    double norm_x = VectorNorm(x);
+
+    // Get the sign of the first element of x (to avoid cancellation)
+    double sign_x0 = (*x)(0, 0).sign();
+    // Create the first unit vector of the same size as x
+    Matrix e1 = unitVector(0, x->getNumRows());
+    // Calculate the Householder vector
+    Matrix v = *x + sign_x0 * norm_x * e1;
+    // Normalize the Householder vector
+    v = v * (1.0/VectorNorm(&v));
+    std::cout << "v dims: " << v.getNumRows() << " x " << v.getNumCols() << std::endl;
+    return v;
+    */
+
+
 }
 
-std::vector<Matrix> QRDecomp(Matrix const& A) {
+std::vector<Matrix> QRDecomp(Matrix const& A) { //todo stabilize
 
     Matrix R = A;
     std::vector<Matrix> HTransforms;
@@ -855,8 +880,12 @@ Matrix covarianceMatrix(Matrix* M) {
 
 
 Matrix littleCovariance(Matrix& matrix) {
+    //std::cout << matrix << std::endl;
     Matrix matrixTranspose = conjTranspose(&matrix);
+    ComplexNum cNum(1.0/(matrix.getNumRows() - 1), 0);
+    matrixTranspose = matrixTranspose * cNum;
     Matrix product = matMul(&matrix, &matrixTranspose);
-    product = product * (1/(product.getNumRows()));
+    //std::cout << product << std::endl;
+    //product = product * (1.0/(product.getNumRows() - 1));
     return product;
 }

@@ -10,6 +10,8 @@ void displayImage(std::string& window, Matrix& matrixToDisplay); //todo
 
 Matrix flattenMatrix(Matrix& matrixToFlatten);
 
+Matrix unflattenMatrix(Matrix& matrixToUnflatten, int numRows, int numCols); // Not a resize function. Only tkaes
+
 Matrix shuffleRowOrder(Matrix& matrix);
 
 std::vector<Matrix> trainTestSplit(Matrix& data, double percent); // Data should be in rows, percent is the percent (0.0 - 1.0) of data that should be in the training set

@@ -51,14 +51,41 @@ void displayImage(std::string& window, Matrix& matrixToDisplay) {
 }
 
 Matrix flattenMatrix(Matrix& matrixToFlatten) {
-    Matrix flattenedMatrix(matrixToFlatten.getNumRows() * matrixToFlatten.getNumCols(), 1);
+    Matrix flattenedMatrix(1, matrixToFlatten.getNumRows() * matrixToFlatten.getNumCols());
     int cumulativeSum = 0;
     for (int i = 0; i < matrixToFlatten.getNumRows(); i++) {
         for (int j = 0; j < matrixToFlatten.getNumCols(); j++) {
-            flattenedMatrix(cumulativeSum++, 0) = matrixToFlatten(i, j);
+            flattenedMatrix(0, cumulativeSum++) = matrixToFlatten(i, j);
         }
     }
     return flattenedMatrix;
+}
+
+Matrix unflattenMatrix(Matrix& matrixToUnflatten, int numRows, int numCols) {
+
+    if (numRows == matrixToUnflatten.getNumRows() && numCols == matrixToUnflatten.getNumCols()) {
+        return matrixToUnflatten;
+    }
+
+    if (matrixToUnflatten.getNumRows() > 1) {
+        throw std::invalid_argument("Matrix is not flat");
+        // Later we can simply call a general resize method here and return the result of that
+    }
+
+    if ((numRows * numCols) != (matrixToUnflatten.getNumCols())) {
+        throw std::invalid_argument("unflattenMatrix: invalid matrix size!");
+    }
+
+    Matrix matrixToReturn(numRows, numCols);
+
+    int cumulativeSum = 0;
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            matrixToReturn(i, j) = matrixToUnflatten(0, cumulativeSum++);
+        }
+    }
+
+    return matrixToReturn;
 }
 
 
@@ -158,9 +185,14 @@ Matrix vectorToMatrixOfMatrices(std::vector<Matrix>& vectorOfMatrices) {
         if (vectorOfMatrices[i].getNumRows() * vectorOfMatrices[i].getNumCols() != numCols) {
             throw std::invalid_argument("vectorToMatrixOfMatrices: Matrices in vector not of the same size!");
         }
+        Matrix matrixToFlatten = vectorOfMatrices[i];
+        Matrix flattenedMatrix = flattenMatrix(matrixToFlatten);
 
-        Matrix flattenedMatrix = flattenMatrix(vectorOfMatrices[i]);
-        matrixToReturn(i) = flattenedMatrix; // Set row i of matrixToReturn equal to the flattened matrix in position i of the vector of matrices
+        for (int j = 0; j < matrixToReturn.getNumCols(); j++) {
+            matrixToReturn(i, j) = flattenedMatrix(0, j);
+        }
+
+        //matrixToReturn.rowAssign(i, &flattenedMatrix);
     }
 
     return matrixToReturn;

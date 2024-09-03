@@ -17,7 +17,7 @@ private:
 
 public:
     // Constructors
-    FaceSpace(Matrix faceMatrix, double percentVariance); // The percentVariance parameter allows the user to select what percent of the variance of faces the eigenfaces should cover
+    FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance); // The percentVariance parameter allows the user to select what percent of the variance of faces the eigenfaces should cover
     FaceSpace(std::string& path, double percentVariance);
 
     long getNumFaces();
@@ -27,6 +27,12 @@ public:
     unsigned int getNumFacesAdded();
     unsigned int getNumFacesRemoved();
 
-    // todo dislay face, match face, remove face, and add face methods
+    Matrix getFaceEntry(int n); // gets the nth flattened face in the face database
+    Matrix getMeanFace();
+    Matrix getEigenFaceEntry(int n); // gets the nth flattened face in the eigen face database
+
+
+
+    // todo display face, match face, remove face, and add face method
 
 };

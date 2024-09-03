@@ -16,9 +16,20 @@ Matrix meanFlattenedFace(Matrix matrixOfFlattenedFaces) {
 }
 
 
-FaceSpace::FaceSpace(Matrix faceMatrix, double percentVariance) : faceDatabase(faceMatrix), meanFace(meanFlattenedFace(faceMatrix)), eigenFaceDatabase(1, 1), numFaces(faceMatrix.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
+FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceDatabase(faceMatrixToAnalyze), eigenFaceDatabase(1, 1), numFaces(faceMatrixToAnalyze.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
     ComplexNum percentVarianceCNum(percentVariance, 0);
     // Must now create the eigenfaces
+    // Normalize data
+    Matrix faceMatrix = faceMatrixToAnalyze;
+    ComplexNum number(1.0/255, 0);
+
+    faceMatrix = faceMatrix * number;
+    //std::cout << "Normed face matrix:\n" << faceMatrix << std::endl;
+
+    meanFace = meanFlattenedFace(faceMatrix);
+
+    //Matrix newMatrix = meanFace;
+    //std::cout << "Mean flattened face:\n" << newMatrix << std::endl;
 
     // Subtract mean face from faceMatrix
     Matrix meanSubtractedMatrix = faceMatrix;
@@ -28,11 +39,25 @@ FaceSpace::FaceSpace(Matrix faceMatrix, double percentVariance) : faceDatabase(f
         }
     }
 
+
+
     Matrix littleCovarianceMatrix = littleCovariance(meanSubtractedMatrix);
+
+    //std::cout << "Little covariance matrix:\n" << littleCovarianceMatrix << std::endl;
+
 
     // Compute small eigenfaces
     std::vector<ComplexNum> eigenvalues;
+
+    std::cout << "We try to compute eigenvectors" << std::endl;
+    std::cout << "little covariance matrix has dimensions " << littleCovarianceMatrix.getNumRows() << " x " << littleCovarianceMatrix.getNumCols() << std::endl;
+
     std::vector<Matrix> smallEigenFaces = eigenvectors(&littleCovarianceMatrix, eigenvalues);
+    std::cout << "We computed eigenvectors" << std::endl;
+
+    for (int i = 0; i < eigenvalues.size(); i++) {
+        std::cout << eigenvalues[i] << std::endl;
+    }
 
     // Obtain final eigenfaces via linear transformation
     std::vector<Matrix> eigenFaces; // Column vectors
@@ -49,10 +74,14 @@ FaceSpace::FaceSpace(Matrix faceMatrix, double percentVariance) : faceDatabase(f
 
     // Select the top k eigenfaces using the given percentVariance argument
 
+    std::reverse(eigenvalues.begin(), eigenvalues.end());
+    std::reverse(eigenFaces.begin(), eigenFaces.end());
+
     ComplexNum totalVariance(0, 0);
     for (int i = 0; i < eigenvalues.size(); i++) {
         totalVariance += eigenvalues[i];
     }
+    std::cout << "Total variance is: " << totalVariance << std::endl;
 
     ComplexNum eigenSum(0, 0);
     int k = 0;
@@ -104,6 +133,26 @@ unsigned int FaceSpace::getNumFacesAdded() {
 unsigned int FaceSpace::getNumFacesRemoved() {
     return numFacesRemoved;
 }
+
+Matrix FaceSpace::getFaceEntry(int n) {
+    if (numFaces < n) {
+        throw std::invalid_argument("FaceSpace::getFaceEntry: argument out of bounds!");
+    }
+    return faceDatabase[n - 1];
+}
+
+Matrix FaceSpace::getMeanFace() {
+    return meanFace;
+}
+
+Matrix FaceSpace::getEigenFaceEntry(int n) {
+    if (numEigenFaces < n) {
+        throw std::invalid_argument("FaceSpace::getEigenFaceEntry: argument out of bounds!");
+    }
+    return eigenFaceDatabase[n - 1];
+}
+
+
 
 
 

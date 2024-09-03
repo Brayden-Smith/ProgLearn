@@ -169,9 +169,13 @@ int main() {
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
 
 
-    //std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
-    //std::cout << "Eigenvalues" << std::endl;
-    //std::cout << "eigens length is " << eigens.size() << std::endl;
+    std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
+    std::cout << "Eigenvalues" << std::endl;
+    std::reverse(eigens.begin(), eigens.end());
+    for (int i = 0; i < eigens.size(); i++) {
+        std::cout << eigens[i] << std::endl;
+    }
+    std::cout << "eigens length is " << eigens.size() << std::endl;
 
 
     //expected value test
@@ -287,12 +291,27 @@ int main() {
     //Matrix image = importGrayscaleImage(path);
     //std::string hello = "Hello";
     //displayImage(hello, image);
+
+
+
     std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
     std::vector<Matrix> images = importGrayscaleImageFamily(path);
-
     Matrix faceMatrix = vectorToMatrixOfMatrices(images);
     std::cout << "Face matrix has " << faceMatrix.getNumRows() << " rows" << std::endl;
     std::cout << "Face matrix has " << faceMatrix.getNumCols() << " cols" << std::endl;
+    //std::cout << faceMatrix << std::endl;
 
+
+    /*
+    FaceSpace FaceDB(faceMatrix, 0.10);
+    std::cout << "Eigenfaces created" << std::endl;
+
+    std::cout << "Num eigenfaces: " << FaceDB.getNumEigenFaces() << std::endl;
+    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(1);
+    //Matrix face = unflattenMatrix()
+
+    std::string win = "window";
+     */
+    //displayImage(win, firstEigenFaceFlat); // fix
 
 }
