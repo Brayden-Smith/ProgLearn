@@ -10,13 +10,16 @@
 #include "eigenfaces.h"
 #include <filesystem>
 
+
 int main() {
 
 
 
 
 
-    // Complex number test
+
+
+    //Complex number test
     ComplexNum z(3, 2);
     assert(z.getConjugate().getImagPart() == -2 );
     assert ((2+z).getRealPart() == 5);
@@ -71,7 +74,7 @@ int main() {
     //auto t = frontFillVec(Fill,5,ComplexNum(5,5));
     //std::cout << t;
 
-    /*
+
     Matrix matrixToDecomp(4, 3);
     matrixToDecomp(0,0) = ComplexNum(1, 0);
     matrixToDecomp(1,0) = ComplexNum(1, 0);
@@ -88,7 +91,7 @@ int main() {
     //std::cout << "the Q of QR Decomposition\n" << QRDecomp(matrixToDecomp)[0];
     //std::cout << "Matrix to decomp\n" << matrixToDecomp;
     //std::cout << "The R of QR decomp\n" << QRDecomp(matrixToDecomp)[1];
-    */
+
 
 
     Matrix xData(6, 1);
@@ -109,43 +112,11 @@ int main() {
     yData(5, 0) = -7;
 
 
-
-    // OLS regression test
-    LinearRegressor linreg1(&xData, &yData);
-    //std::cout << "Error is: " << linreg1.getError() << std::endl;
-    Matrix testData(1, 1);
-    testData(0, 0) = 825;
-    ComplexNum prediction = linreg1.predict(&testData);
-    //@std::cout << "Prediction is " << prediction << std::endl;
-    Matrix regressionCoeff = linreg1.getRegressionCoefficients();
-    //std::cout << "Regression coefficients:\n" << regressionCoeff << std::endl;
-
     // Eigenvalues test
 
     Matrix wantEigenvalues(3, 3);
 
-    /*
-    wantEigenvalues(0, 0) = 6;
-    wantEigenvalues(1, 0) = 2;
-    wantEigenvalues(2, 0) = 1;
-    wantEigenvalues(0, 1) = 2;
-    wantEigenvalues(1, 1) = 3;
-    wantEigenvalues(2, 1) = 1;
-    wantEigenvalues(0, 2) = 1;
-    wantEigenvalues(1, 2) = 1;
-    wantEigenvalues(2, 2) = 1;
-    */
-    /*
-    wantEigenvalues(0, 0) = 1;
-    wantEigenvalues(1, 0) = 3;
-    wantEigenvalues(2, 0) = 2;
-    wantEigenvalues(0, 1) = 2;
-    wantEigenvalues(1, 1) = 2;
-    wantEigenvalues(2, 1) = 1;
-    wantEigenvalues(0, 2) = 3;
-    wantEigenvalues(1, 2) = 1;
-    wantEigenvalues(2, 2) = 3;
-    */
+
     wantEigenvalues(0, 0) = 1;
     wantEigenvalues(1, 0) = 2;
     wantEigenvalues(2, 0) = 3;
@@ -167,60 +138,6 @@ int main() {
     matToSVD = transpose(&matToSVD);
 
     //std::cout << "The R of QR decomp\n" << QRDecomp(wantEigenvalues)[1];
-
-
-    std::vector<ComplexNum> eigens = eigenvalues(&wantEigenvalues);
-    std::cout << "Eigenvalues" << std::endl;
-    std::reverse(eigens.begin(), eigens.end());
-    for (int i = 0; i < eigens.size(); i++) {
-        std::cout << eigens[i] << std::endl;
-    }
-    std::cout << "eigens length is " << eigens.size() << std::endl;
-
-
-    //expected value test
-    Matrix E(1,5);
-    E(0,0) = ComplexNum(5,0);
-    E(0,1) = ComplexNum(2,0);
-    E(0,2) = ComplexNum(3,0);
-    E(0,3) = ComplexNum(2,0);
-    E(0,4) = ComplexNum(1,0);
-    assert(expectedValue(&E) == ComplexNum(2.6,0));
-
-
-    //covariance test
-    Matrix x2Data(4,1);
-    x2Data(0,0) = ComplexNum(1,0);
-    x2Data(1,0) = ComplexNum(-1,0);
-    x2Data(2,0) = ComplexNum(4,0);
-    x2Data(3,0) = ComplexNum(0,0);
-    Matrix y2Data(4,1);
-    y2Data(0,0) = ComplexNum(1,0);
-    y2Data(1,0) = ComplexNum(-1,0);
-    y2Data(2,0) = ComplexNum(4,0);
-    y2Data(3,0) = ComplexNum(0,0);
-    //std::cout<<covariance(&x2Data,&y2Data);
-
-
-
-    //covariance matrix test
-
-    Matrix covariance(4,3);
-    covariance(0,0) = ComplexNum(-3, 0);
-    covariance(1,0) = ComplexNum(1, 0);
-    covariance(2,0) = ComplexNum(1, 0);
-    covariance(3,0) = ComplexNum(-4, 0);
-    covariance(0,1) = ComplexNum(-3, 0);
-    covariance(1,1) = ComplexNum(-1, 0);
-    covariance(2,1) = ComplexNum(8, 0);
-    covariance(3,1) = ComplexNum(8, 0);
-    covariance(0,2) = ComplexNum(-2, 0);
-    covariance(1,2) = ComplexNum(1, 0);
-    covariance(2,2) = ComplexNum(3, 0);
-    covariance(3,2) = ComplexNum(-3, 0);
-    covariance = covarianceMatrix(&covariance);
-    std::cout << covariance;
-
 
 
 
@@ -294,24 +211,42 @@ int main() {
 
 
 
-    std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
-    std::vector<Matrix> images = importGrayscaleImageFamily(path);
-    Matrix faceMatrix = vectorToMatrixOfMatrices(images);
-    std::cout << "Face matrix has " << faceMatrix.getNumRows() << " rows" << std::endl;
-    std::cout << "Face matrix has " << faceMatrix.getNumCols() << " cols" << std::endl;
-    //std::cout << faceMatrix << std::endl;
 
 
-    /*
-    FaceSpace FaceDB(faceMatrix, 0.10);
-    std::cout << "Eigenfaces created" << std::endl;
-
-    std::cout << "Num eigenfaces: " << FaceDB.getNumEigenFaces() << std::endl;
-    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(1);
-    //Matrix face = unflattenMatrix()
-
-    std::string win = "window";
-     */
     //displayImage(win, firstEigenFaceFlat); // fix
+
+    Matrix AA(4, 4);
+
+    AA(0, 0) = 4;
+    AA(0, 1) = 1;
+    AA(0, 2) = -2;
+    AA(0, 3) = 2;
+
+    AA(1, 0) = 1;
+    AA(1, 1) = 2;
+    AA(1, 2) = 0;
+    AA(1, 3) = 1;
+
+    AA(2, 0) = -2;
+    AA(2, 1) = 0;
+    AA(2, 2) = 3;
+    AA(2, 3) = -2;
+
+    AA(3, 0) = 2;
+    AA(3, 1) = 1;
+    AA(3, 2) = -2;
+    AA(3, 3) = -1;
+
+    std::cout << "Matrix AA is:\n" << AA << std::endl;
+
+    Matrix triDiag = tridiagonalizeMatrix(AA);
+
+    std::cout << "Tridiaged AA is:\n" << triDiag << std::endl;
+
+
+
+
+    return 0;
+
 
 }

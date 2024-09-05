@@ -65,4 +65,6 @@ double complexNumToDouble(const ComplexNum& num);
 ComplexNum sqrt(ComplexNum numToSquareroot);
 double getRealSign(ComplexNum num);
 
+ComplexNum power(ComplexNum num, int power);
+
 

@@ -30,6 +30,7 @@ double VectorNorm(Matrix* pointerToMatrix);
 Matrix unitVector(int k, int dim);
 Matrix identityMatrix(int dim);
 Matrix frontFillVec(Matrix M, int dim, ComplexNum const& Fill);
+Matrix tridiagonalizeMatrix(Matrix& matrixToTri); // For our beloved symmetric AA* matrices
 Matrix householderReflection(Matrix* x);
 std::vector<Matrix> QRDecomp(Matrix const& A);
 

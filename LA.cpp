@@ -1,4 +1,5 @@
 #include "LA.h"
+#include "Matrix.h"
 
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
@@ -396,6 +397,84 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel) {
     return Minor;
 }
 
+Matrix tridiagonalizeMatrix(Matrix& matrixToTri) {
+
+    if (matrixToTri.getNumCols() != matrixToTri.getNumRows()) {
+        throw std::invalid_argument("tridiagonalizeMatrix: Matrix is not square!");
+    }
+
+    Matrix A = matrixToTri;
+
+    for (int i = 0; i < matrixToTri.getNumRows() - 2; i++) { // Loop
+        std::cout << "STEP " << i << std::endl;
+
+        // Step 1: Calculate alpha
+            // Get sign
+        int alphaSign = getRealSign(matrixToTri(i+1, i));
+            // Get sum
+        ComplexNum alphaSum(0, 0);
+        for (int j = i + 1; j < matrixToTri.getNumRows(); j++) {
+
+            ComplexNum a(j, i);
+
+            // Get power
+            ComplexNum numSquared = a * a;
+
+            alphaSum += numSquared;
+        }
+        // Square root sum
+        double sqrtSum = sqrt(alphaSum.getRealPart());
+        double alpha = -1 * alphaSign * sqrtSum;
+
+
+        // Step 2: Find r
+        ComplexNum entry = matrixToTri(i+1, i);
+        double alphaEntry = (entry * alpha).getRealPart();
+        double difference = (1.0/2.0) * ((alpha * alpha) - alphaEntry);
+
+        double r = sqrt(difference);
+
+        // Construct vector
+        Matrix vector(matrixToTri.getNumRows(), 1);
+
+        // Set first i positions to 0
+        for (int j = 0; j <= i; j++) {
+            vector(j, 0) = ComplexNum(0, 0);
+        }
+
+        // set i+1st position
+        vector(i+1, 0) = (entry - alpha) * (ComplexNum(1, 0)/(2*r));
+
+
+        for (int j = i+2; j < matrixToTri.getNumRows(); j++) {
+            vector(j, 0) = (matrixToTri(j, i) * (ComplexNum(1, 0)/(2*r)));
+        }
+
+        // Compute P
+
+        Matrix identity = identityMatrix(matrixToTri.getNumRows());
+
+        Matrix vectorTranspose = conjTranspose(&vector);
+        Matrix vectorTransform = matMul(&vector, &vectorTranspose);
+        vectorTransform = vectorTransform * 2;
+
+        Matrix P = identity - vectorTransform;
+
+        std::cout << "V is:\n" << vector << std::endl;
+        std::cout << "P is:\n" << P << std::endl;
+
+        A = matMul(&A, &P);
+        A = matMul(&P, &A);
+    }
+
+
+    return A;
+}
+
+
+
+
+
 Matrix householderReflection(Matrix* x) { //todo stabilize
 
 
@@ -407,26 +486,6 @@ Matrix householderReflection(Matrix* x) { //todo stabilize
     //std::cout << "y dims: " << y.getNumRows() << " x " << y.getNumCols() << std::endl;
     return y;
 
-
-    /*
-    if (x->getNumCols() > 1) {
-        throw std::invalid_argument("householderReflection: Invalid input");
-    }
-
-    // Calculate the norm of x
-    double norm_x = VectorNorm(x);
-
-    // Get the sign of the first element of x (to avoid cancellation)
-    double sign_x0 = (*x)(0, 0).sign();
-    // Create the first unit vector of the same size as x
-    Matrix e1 = unitVector(0, x->getNumRows());
-    // Calculate the Householder vector
-    Matrix v = *x + sign_x0 * norm_x * e1;
-    // Normalize the Householder vector
-    v = v * (1.0/VectorNorm(&v));
-    std::cout << "v dims: " << v.getNumRows() << " x " << v.getNumCols() << std::endl;
-    return v;
-    */
 
 
 }
