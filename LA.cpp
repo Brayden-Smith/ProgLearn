@@ -4,11 +4,11 @@
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
         for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
-            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-12) {
                 (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
                 //std::cout << "stab called";
             }
-            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-12) {
                 (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
                 //std::cout<< "stab called";
             }
@@ -406,16 +406,15 @@ Matrix tridiagonalizeMatrix(Matrix& matrixToTri) {
     Matrix A = matrixToTri;
 
     for (int i = 0; i < matrixToTri.getNumRows() - 2; i++) { // Loop
-        std::cout << "STEP " << i << std::endl;
 
         // Step 1: Calculate alpha
             // Get sign
-        int alphaSign = getRealSign(matrixToTri(i+1, i));
+        int alphaSign = getRealSign(A(i+1, i));
             // Get sum
         ComplexNum alphaSum(0, 0);
-        for (int j = i + 1; j < matrixToTri.getNumRows(); j++) {
+        for (int j = i + 1; j < A.getNumRows(); j++) {
 
-            ComplexNum a(j, i);
+            ComplexNum a = A(j, i);
 
             // Get power
             ComplexNum numSquared = a * a;
@@ -428,40 +427,35 @@ Matrix tridiagonalizeMatrix(Matrix& matrixToTri) {
 
 
         // Step 2: Find r
-        ComplexNum entry = matrixToTri(i+1, i);
+        ComplexNum entry = A(i+1, i);
         double alphaEntry = (entry * alpha).getRealPart();
         double difference = (1.0/2.0) * ((alpha * alpha) - alphaEntry);
 
         double r = sqrt(difference);
 
         // Construct vector
-        Matrix vector(matrixToTri.getNumRows(), 1);
+        Matrix vector(A.getNumRows(), 1);
 
         // Set first i positions to 0
         for (int j = 0; j <= i; j++) {
             vector(j, 0) = ComplexNum(0, 0);
         }
 
-        // set i+1st position
         vector(i+1, 0) = (entry - alpha) * (ComplexNum(1, 0)/(2*r));
 
 
-        for (int j = i+2; j < matrixToTri.getNumRows(); j++) {
-            vector(j, 0) = (matrixToTri(j, i) * (ComplexNum(1, 0)/(2*r)));
+        for (int j = i+2; j < A.getNumRows(); j++) {
+            vector(j, 0) = (A(j, i) * (ComplexNum(1, 0)/(2*r)));
         }
 
         // Compute P
-
-        Matrix identity = identityMatrix(matrixToTri.getNumRows());
+        Matrix identity = identityMatrix(A.getNumRows());
 
         Matrix vectorTranspose = conjTranspose(&vector);
         Matrix vectorTransform = matMul(&vector, &vectorTranspose);
         vectorTransform = vectorTransform * 2;
 
         Matrix P = identity - vectorTransform;
-
-        std::cout << "V is:\n" << vector << std::endl;
-        std::cout << "P is:\n" << P << std::endl;
 
         A = matMul(&A, &P);
         A = matMul(&P, &A);
