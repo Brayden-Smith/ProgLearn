@@ -94,7 +94,7 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
         for (int j = 0; j < rowFace.getNumCols(); j++) {
             eigenFaceDatabaseBuilder(i, j) = rowFace(0, j);
         }
-        //eigenFaceDatabaseBuilder(i) = rowFace; // todo row assignment is not working how you want it to
+        //eigenFaceDatabaseBuilder(i) = rowFace;
     }
 
 
