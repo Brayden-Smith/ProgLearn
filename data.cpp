@@ -27,7 +27,22 @@ Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix) { // Converts a single-c
 }
 
 
-cv::Mat convertMatrixToCVMatrix(Matrix& matrix) { // Converts a single-channel OpenCV matrix to a matrix object
+cv::Mat convertMatrixToCVMatrix(Matrix& matrix) {
+    int numRows = matrix.getNumRows();
+    int numCols = matrix.getNumCols();
+    cv::Mat matrixToReturn(numRows, numCols, CV_64F);  // Use CV_64F for double precision
+
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            double realPart = matrix(i, j).getRealPart();
+            matrixToReturn.at<double>(i, j) = realPart;    // Store as double
+        }
+    }
+
+    return matrixToReturn;
+}
+
+cv::Mat convertMatrixToCVGrayscaleMatrix(Matrix& matrix) { // Converts a single-channel OpenCV matrix to a matrix object
     int numRows = matrix.getNumRows();
     int numCols = matrix.getNumCols();
     cv::Mat matrixToReturn(numRows, numCols, CV_8U);
@@ -43,9 +58,8 @@ cv::Mat convertMatrixToCVMatrix(Matrix& matrix) { // Converts a single-channel O
 }
 
 
-
 void displayImage(std::string& window, Matrix& matrixToDisplay) {
-    cv::Mat CVMat = convertMatrixToCVMatrix(matrixToDisplay);
+    cv::Mat CVMat = convertMatrixToCVGrayscaleMatrix(matrixToDisplay);
     cv::imshow(window, CVMat);
     cv::waitKey(0);
 }

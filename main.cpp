@@ -238,12 +238,41 @@ int main() {
     AA(3, 3) = -1;
 
     std::cout << "Matrix AA is:\n" << AA << std::endl;
-
     Matrix triDiag = tridiagonalizeMatrix(AA);
-
     std::cout << "Tridiaged AA is:\n" << triDiag << std::endl;
 
 
+    std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
+    std::vector<Matrix> images = importGrayscaleImageFamily(path);
+    Matrix faceMatrix = vectorToMatrixOfMatrices(images);
+    std::cout << "Face matrix has " << faceMatrix.getNumRows() << " rows" << std::endl;
+    std::cout << "Face matrix has " << faceMatrix.getNumCols() << " cols" << std::endl;
+    //std::cout << faceMatrix << std::endl;
+
+    FaceSpace FaceDB(faceMatrix, 0.85);
+    std::cout << "Eigenfaces created" << std::endl;
+
+    std::cout << "Num eigenfaces: " << FaceDB.getNumEigenFaces() << std::endl;
+    std::cout << "Num top eigenfaces " << FaceDB.getNumTopEigenFaces() << std::endl;
+
+
+    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(1);
+
+    std::cout << firstEigenFaceFlat.getNumRows() << std::endl;
+    std::cout << firstEigenFaceFlat.getNumCols() << std::endl;
+    //std::cout << firstEigenFaceFlat << std::endl;
+    Matrix face = unflattenMatrix(firstEigenFaceFlat, 112, 92);
+
+    std::cout << "face rows: " << face.getNumRows() << std::endl;
+    std::cout << "face cols: " << face.getNumCols() << std::endl;
+
+    std::string win = "window";
+
+    Matrix normedFace = normalizeMatrix(face, largestNumberInRealMatrix(face), smallestNumberInRealMatrix(face));
+
+    std::cout << normedFace << std::endl;
+
+    displayImage(win, normedFace);
 
 
     return 0;

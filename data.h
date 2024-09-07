@@ -4,7 +4,9 @@
 
 Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix); // Converts a single-channel OpenCV matrix to a matrix object
 
-cv::Mat convertMatrixToCVMatrix(Matrix& matrix); //todo
+cv::Mat convertMatrixToCVMatrix(Matrix& matrix);
+
+cv::Mat convertMatrixToCVGrayscaleMatrix(Matrix& matrix);
 
 void displayImage(std::string& window, Matrix& matrixToDisplay); //todo
 

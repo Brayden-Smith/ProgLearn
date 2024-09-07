@@ -2,6 +2,8 @@
 #include "Matrix.h"
 #include <set>
 #include <unordered_set>
+#include <opencv2/opencv.hpp>
+#include "data.h"
 
 
 void thresholdStabilize(Matrix* matrixToStabilize);
@@ -46,3 +48,10 @@ ComplexNum covariance(Matrix* Z, Matrix* W);
 Matrix covarianceMatrix(Matrix* M);
 
 Matrix littleCovariance(Matrix& matrix);
+
+std::vector<ComplexNum> CVEigenValues(Matrix& matrix); // Only when real eigenvalues are expected (symmetric matrices)
+std::vector<Matrix> CVEigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues); // Only when real eigenvalues are expected (symmetric matrices)
+
+double smallestNumberInRealMatrix(Matrix& matrix);
+double largestNumberInRealMatrix(Matrix& matrix);
+Matrix normalizeMatrix(Matrix& matrix, double maxVal, double minVal);
