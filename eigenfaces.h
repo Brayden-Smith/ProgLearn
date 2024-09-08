@@ -27,10 +27,11 @@ public:
     unsigned int getNumFacesAdded();
     unsigned int getNumFacesRemoved();
 
-    Matrix getFaceEntry(int n); // gets the nth flattened face in the face database
+    Matrix getFaceEntry(int n); // Gets the nth flattened face in the face database
     Matrix getMeanFace();
-    Matrix getEigenFaceEntry(int n); // gets the nth flattened face in the eigen face database
+    Matrix getEigenFaceEntry(int n); // Gets the nth flattened face in the eigen face database
 
+    Matrix matchFace(Matrix& faceToMatch, double similarityScore); // faceToMatch must be a flattened face
 
 
     // todo display face, match face, remove face, and add face method

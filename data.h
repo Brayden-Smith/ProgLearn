@@ -8,7 +8,7 @@ cv::Mat convertMatrixToCVMatrix(Matrix& matrix);
 
 cv::Mat convertMatrixToCVGrayscaleMatrix(Matrix& matrix);
 
-void displayImage(std::string& window, Matrix& matrixToDisplay); //todo
+void displayImage(std::string& window, Matrix& matrixToDisplay);
 
 Matrix flattenMatrix(Matrix& matrixToFlatten);
 

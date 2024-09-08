@@ -42,6 +42,7 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
     std::vector<ComplexNum> eigenvalues;
 
     std::vector<Matrix> smallEigenFaces = CVEigenvectors(&littleCovarianceMatrix, eigenvalues);
+    //std::vector<Matrix> smallEigenFaces = eigenvectors(&littleCovarianceMatrix, eigenvalues);
     std::cout << "We computed eigenvectors" << std::endl;
 
 
@@ -164,6 +165,37 @@ Matrix FaceSpace::getEigenFaceEntry(int n) {
     }
 
     return matrixToReturn;
+}
+
+
+Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
+    Matrix faceToMatchColumnVector = conjTranspose(&faceToMatch);
+    Matrix columnMeanFace = conjTranspose(&meanFace);
+    Matrix processedFaceColumnVector = faceToMatchColumnVector - columnMeanFace;
+
+    Matrix faceToMatchWeightVector(numEigenFaces, 1);
+    for (int i = 0; i < numEigenFaces; i++) {
+        Matrix flattenedEigenFace = eigenFaceDatabase[i];
+        Matrix columnEigenFace = conjTranspose(&flattenedEigenFace);
+        ComplexNum projectionResult = innerProduct(columnEigenFace, processedFaceColumnVector);
+        faceToMatchWeightVector(i, 0) = projectionResult;
+    }
+
+    normalizeVectorsInMatrix(&faceToMatchWeightVector);
+
+    // Now go through each vector, and compare
+
+    double minDistance = 2.1;
+    int minDistFaceIndex = 0;
+    for (int i = 0; i < numFaces; i++) {
+        // todo
+
+
+    }
+
+
+
+    return Matrix();
 }
 
 

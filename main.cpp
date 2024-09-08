@@ -256,7 +256,7 @@ int main() {
     std::cout << "Num top eigenfaces " << FaceDB.getNumTopEigenFaces() << std::endl;
 
 
-    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(1);
+    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(6);
 
     std::cout << firstEigenFaceFlat.getNumRows() << std::endl;
     std::cout << firstEigenFaceFlat.getNumCols() << std::endl;
