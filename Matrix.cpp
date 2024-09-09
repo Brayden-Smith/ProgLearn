@@ -223,4 +223,15 @@ Matrix Matrix::conjugate() const {
     return conjugate;
 }
 
+bool hasNaN(Matrix &mat) {
+    for (int i = 0; i < mat.getNumRows(); i++) {
+        for (int j = 0; j < mat.getNumCols(); j++) {
+            if (std::isnan(mat(i, j).getRealPart()) || std::isnan(mat(i, j).getImagPart())) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 

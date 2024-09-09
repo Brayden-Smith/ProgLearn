@@ -316,7 +316,7 @@ Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That bein
     return outputMatrix;
 }
 
-//gets magnitude of column matrix
+//gets magnitude of column matrixcolumnFace
 double VectorNorm(Matrix* pointerToMatrix) {
     double Norm = 0;
     for (int j = 0; j < pointerToMatrix->getNumRows(); j++) {
@@ -656,7 +656,6 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
     int counter = 0;
     while (!akIsUpperTriangular) {
         counter += 1;
-        std::cout << "Loop iteration: " << counter << std::endl;
 
         Matrix subMatrix(2,2);
         int numRows = matrix->getNumRows();
@@ -971,7 +970,7 @@ std::vector<ComplexNum> CVEigenValues(Matrix& matrix) {
 std::vector<Matrix> CVEigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues) {
     std::vector<ComplexNum> eigenValues;
     std::vector<Matrix> eigenVectorMatrices;
-    std::cout << "Here?" << std::endl;
+
     cv::Mat CVMatrix = convertMatrixToCVMatrix(*matrix);
     cv::Mat CVEigenValues;
     cv::Mat CVEigenVectors;

@@ -16,8 +16,11 @@ Matrix meanFlattenedFace(Matrix matrixOfFlattenedFaces) {
 }
 
 
-FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceDatabase(faceMatrixToAnalyze), eigenFaceDatabase(1, 1), numFaces(faceMatrixToAnalyze.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
+FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) : faceDatabase(faceMatrixToAnalyze), eigenFaceDatabase(1, 1), numFaces(faceMatrixToAnalyze.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
     ComplexNum percentVarianceCNum(percentVariance, 0);
+
+
+
 
     Matrix faceMatrix = faceMatrixToAnalyze;
     ComplexNum number(1.0/255, 0);
@@ -43,14 +46,10 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
 
     std::vector<Matrix> smallEigenFaces = CVEigenvectors(&littleCovarianceMatrix, eigenvalues);
     //std::vector<Matrix> smallEigenFaces = eigenvectors(&littleCovarianceMatrix, eigenvalues);
-    std::cout << "We computed eigenvectors" << std::endl;
 
 
-    for (int i = 0; i < eigenvalues.size(); i++) {
-        std::cout << eigenvalues[i] << std::endl;
-    }
 
-    std::cout << "Num eigenvectors is " << smallEigenFaces.size() << std::endl;
+
 
     // Obtain final eigenfaces via linear transformation
     std::vector<Matrix> eigenFaces; // Column vectors
@@ -67,15 +66,12 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
 
     // Select the top k eigenfaces using the given percentVariance argument
 
-    for (int i = 0; i < eigenvalues.size(); i++) {
-        std::cout << eigenvalues[i] << std::endl;
-    }
 
     ComplexNum totalVariance(0, 0);
     for (int i = 0; i < eigenvalues.size(); i++) {
         totalVariance += eigenvalues[i];
     }
-    std::cout << "Total variance is: " << totalVariance << std::endl;
+
 
     ComplexNum eigenSum(0, 0);
     int k = 0;
@@ -88,7 +84,7 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
     // Build face matrix of eigenfaces
     Matrix eigenFaceDatabaseBuilder(eigenFaces.size(), meanMatrixTranspose.getNumRows()); // Double-check dimensions are correct
 
-    std::cout << "Face builder dims: " << eigenFaces.size() << "x" << meanMatrixTranspose.getNumRows() << std::endl;
+
 
     for (int i = 0; i < eigenFaces.size(); i++) {
         Matrix rowFace = flattenMatrix(eigenFaces[i]);
@@ -104,7 +100,12 @@ FaceSpace::FaceSpace(Matrix faceMatrixToAnalyze, double percentVariance) : faceD
     eigenFaceDatabase = eigenFaceDatabaseBuilder;
     numEigenFaces = eigenFaceDatabase.getNumRows();
     numOfTopEigenFaces = k;
-    std::cout << "Done with face object construction" << std::endl;
+
+
+
+
+
+
 }
 
 
@@ -169,13 +170,28 @@ Matrix FaceSpace::getEigenFaceEntry(int n) {
 
 
 Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
-    Matrix faceToMatchColumnVector = conjTranspose(&faceToMatch);
-    Matrix columnMeanFace = conjTranspose(&meanFace);
+
+    Matrix faceDatabaseCopy = faceDatabase;
+    int originalFaceNumRows = faceToMatch.getNumRows();
+    int originalFaceNumCols = faceToMatch.getNumCols();
+    Matrix meanFaceMatrix = meanFace;
+
+    Matrix faceToMatchFlattened = flattenMatrix(faceToMatch);
+
+    Matrix faceToMatchColumnVector = conjTranspose(&faceToMatchFlattened);
+    Matrix columnMeanFace = conjTranspose(&meanFaceMatrix);
     Matrix processedFaceColumnVector = faceToMatchColumnVector - columnMeanFace;
 
-    Matrix faceToMatchWeightVector(numEigenFaces, 1);
-    for (int i = 0; i < numEigenFaces; i++) {
-        Matrix flattenedEigenFace = eigenFaceDatabase[i];
+    Matrix faceToMatchWeightVector(numOfTopEigenFaces, 1);
+
+    for (int i = 0; i < numOfTopEigenFaces; i++) {
+        Matrix flattenedEigenFace(1, eigenFaceDatabase.getNumCols());
+
+        for (int j = 0; j < eigenFaceDatabase.getNumCols(); j++) {
+            flattenedEigenFace(0, j) = eigenFaceDatabase(i, j);
+        }
+
+
         Matrix columnEigenFace = conjTranspose(&flattenedEigenFace);
         ComplexNum projectionResult = innerProduct(columnEigenFace, processedFaceColumnVector);
         faceToMatchWeightVector(i, 0) = projectionResult;
@@ -183,19 +199,73 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
 
     normalizeVectorsInMatrix(&faceToMatchWeightVector);
 
-    // Now go through each vector, and compare
+
+    // Now go through each vector, project it to the eigenspace, and compare
 
     double minDistance = 2.1;
     int minDistFaceIndex = 0;
+
+
+
     for (int i = 0; i < numFaces; i++) {
-        // todo
+
+        Matrix flattenedFace(1, faceDatabase.getNumCols());
+
+        for (int k = 0; k < faceDatabase.getNumCols(); k++) {
+            flattenedFace(0, k) = faceDatabase(i, k);
+        }
+
+        flattenedFace = flattenedFace - meanFace;
+
+        Matrix projectionVector(numOfTopEigenFaces, 1);
+
+        for (int j = 0; j < numOfTopEigenFaces; j++) {
+
+            Matrix columnFace = conjTranspose(&flattenedFace);
+            Matrix flattenedEigenFace(1, eigenFaceDatabase.getNumCols());
+
+            for (int k = 0; k < eigenFaceDatabase.getNumCols(); k++) {
+                flattenedEigenFace(0, k) = eigenFaceDatabase(j, k);
+            }
+
+            Matrix columnEigenFace = conjTranspose(&flattenedEigenFace);
+            ComplexNum projectionResult = innerProduct(columnEigenFace, columnFace);
+            projectionVector(j, 0) = projectionResult;
+        }
+
+        normalizeVectorsInMatrix(&projectionVector);
 
 
+
+        Matrix difference = projectionVector - faceToMatchWeightVector;
+
+        double distance = VectorNorm(&difference);
+        //std::cout << "Candidate distance for face " << i << " is " << distance << std::endl;
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            minDistFaceIndex = i;
+        }
+
+    }
+
+    if (minDistance == 2.1) {
+        std::cout << "FaceSpace::matchFace: No match found!" << std::endl;
+        return {1, 1};
     }
 
 
 
-    return Matrix();
+    Matrix match(1, faceDatabase.getNumCols());
+
+    for (int k = 0; k < faceDatabase.getNumCols(); k++) {
+        ComplexNum cNumb = faceDatabaseCopy(minDistFaceIndex, k);
+        match(0, k) = cNumb;
+    }
+
+
+    Matrix reconstructedFace = unflattenMatrix(match, originalFaceNumRows, originalFaceNumCols);
+    return reconstructedFace;
 }
 
 

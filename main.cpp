@@ -190,15 +190,10 @@ int main() {
     std::vector<ComplexNum> core;
     std::vector<Matrix> decomp = singularValueDecomp(&matToSVD);
 
-    std::cout << "Matrix to SVD:\n" << matToSVD << std::endl;
 
-    std::cout << "U:\n" << decomp[0] << std::endl;
-    std::cout << "Sigma:\n" << decomp[1] << std::endl;
-    std::cout << "V T:\n" << decomp[2] << std::endl;
 
     Matrix intermed = matMul(&decomp[1], &decomp[2]);
     Matrix originalMatrix = matMul(&decomp[0], &intermed);
-    std::cout << "Orig:\n" << originalMatrix << std::endl;
 
     cv::Mat testMat = cv::Mat::zeros(3, 3, CV_8U);
     std::cout << "Created OpenCV Mat: " << testMat << std::endl;
@@ -237,23 +232,26 @@ int main() {
     AA(3, 2) = -2;
     AA(3, 3) = -1;
 
-    std::cout << "Matrix AA is:\n" << AA << std::endl;
+
     Matrix triDiag = tridiagonalizeMatrix(AA);
-    std::cout << "Tridiaged AA is:\n" << triDiag << std::endl;
+
 
 
     std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
     std::vector<Matrix> images = importGrayscaleImageFamily(path);
+
+
+
+    //std::cout << problemim << std::endl;
+    //displayImage(path, problemim);
+
     Matrix faceMatrix = vectorToMatrixOfMatrices(images);
-    std::cout << "Face matrix has " << faceMatrix.getNumRows() << " rows" << std::endl;
-    std::cout << "Face matrix has " << faceMatrix.getNumCols() << " cols" << std::endl;
-    //std::cout << faceMatrix << std::endl;
+
+
 
     FaceSpace FaceDB(faceMatrix, 0.85);
-    std::cout << "Eigenfaces created" << std::endl;
 
-    std::cout << "Num eigenfaces: " << FaceDB.getNumEigenFaces() << std::endl;
-    std::cout << "Num top eigenfaces " << FaceDB.getNumTopEigenFaces() << std::endl;
+
 
 
     Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(6);
@@ -263,16 +261,22 @@ int main() {
     //std::cout << firstEigenFaceFlat << std::endl;
     Matrix face = unflattenMatrix(firstEigenFaceFlat, 112, 92);
 
-    std::cout << "face rows: " << face.getNumRows() << std::endl;
-    std::cout << "face cols: " << face.getNumCols() << std::endl;
 
     std::string win = "window";
 
-    Matrix normedFace = normalizeMatrix(face, largestNumberInRealMatrix(face), smallestNumberInRealMatrix(face));
+    //Matrix normedFace = normalizeMatrix(face, largestNumberInRealMatrix(face), smallestNumberInRealMatrix(face));
 
-    std::cout << normedFace << std::endl;
+    //std::cout << normedFace << std::endl;
 
-    displayImage(win, normedFace);
+    //displayImage(win, normedFace);
+
+    std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
+    Matrix image = importGrayscaleImage(path2);
+    //std::cout << "FACE TO FIND: " << std::endl;
+    //displayImage(path2, image);
+    Matrix result = FaceDB.matchFace(image, 0.9);
+    displayImage(path2, result);
+
 
 
     return 0;
