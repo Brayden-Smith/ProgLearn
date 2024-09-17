@@ -131,11 +131,15 @@ void normalizeVectorsInMatrix(Matrix* pointerToMatrix) {
             double magnitude = magnitudeOfNumber((*pointerToMatrix)(j,i));
             Norm += (magnitude * magnitude);
         }
-        if (Norm == 1) {
-            return;
-        }
         Norm = sqrt(Norm);
-        double oneOverMagnitude = 1/Norm;
+
+        // Check for zero norm to avoid division by zero
+        if (Norm < 1e-12) {
+            std::cerr << "Warning: Zero norm encountered in column " << i << ". Skipping normalization.\n";
+            continue;
+        }
+
+        double oneOverMagnitude = 1.0 / Norm;
         for (int j = 0; j < pointerToMatrix->getNumRows(); j++) {
             (*pointerToMatrix)(j,i) = (*pointerToMatrix)(j,i) * oneOverMagnitude;
         }

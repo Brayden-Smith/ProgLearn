@@ -237,30 +237,69 @@ int main() {
 
 
 
+
+
     std::string path = "C:\\Users\\chris\\Desktop\\textfilefolder\\location.txt";
     std::vector<Matrix> images = importGrayscaleImageFamily(path);
 
+    /*
+    Matrix testFace(112, 92);
+    for (int i = 0; i < 112; ++i) {
+        for (int j = 0; j < 92; ++j) {
+            testFace(i, j) = ComplexNum(100, 0);  // Set all pixels to 100
+        }
+    }
+    Matrix normedTestFace = normalizeForDisplay(testFace);
+    displayImage(path, normedTestFace);
 
+
+    for (size_t i = 0; i < images.size(); i++) {
+        Matrix currentIm = images[i];
+        if (hasNaN(currentIm)) {
+            std::cout << "NaN detected in face " << i << " immediately after import" << std::endl;
+        }
+    }
+     */
 
     //std::cout << problemim << std::endl;
     //displayImage(path, problemim);
+
+    //displayImage(path, images[1]);
 
     Matrix faceMatrix = vectorToMatrixOfMatrices(images);
 
 
 
+    double minValBefore = smallestNumberInRealMatrix(faceMatrix);
+    double maxValBefore = largestNumberInRealMatrix(faceMatrix);
+    //std::cout << "Before FaceSpace: Min value in faceMatrix: " << minValBefore << std::endl;
+    //std::cout << "Before FaceSpace: Max value in faceMatrix: " << maxValBefore << std::endl;
+
     FaceSpace FaceDB(faceMatrix, 0.85);
 
+    // After FaceSpace construction, verify that faceMatrix hasn't changed
+    double minValAfter = smallestNumberInRealMatrix(faceMatrix);
+    double maxValAfter = largestNumberInRealMatrix(faceMatrix);
+    //std::cout << "After FaceSpace: Min value in faceMatrix: " << minValAfter << std::endl;
+    //std::cout << "After FaceSpace: Max value in faceMatrix: " << maxValAfter << std::endl;
 
 
+    std::cout << "Num eigenfaces: " << FaceDB.getNumTopEigenFaces() << std::endl;
 
-    Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(6);
+    //Matrix firstEigenFaceFlat = FaceDB.getEigenFaceEntry(39);
+    Matrix firstFaceFlat = FaceDB.getEigenFaceEntry(1);
 
-    std::cout << firstEigenFaceFlat.getNumRows() << std::endl;
-    std::cout << firstEigenFaceFlat.getNumCols() << std::endl;
-    //std::cout << firstEigenFaceFlat << std::endl;
-    Matrix face = unflattenMatrix(firstEigenFaceFlat, 112, 92);
+    std::cout << firstFaceFlat.getNumRows() << std::endl;
+    std::cout << firstFaceFlat.getNumCols() << std::endl;
+    Matrix face = unflattenMatrix(firstFaceFlat, 112, 92);
+    Matrix normalizedFace = normalizeForDisplay(face);
 
+    double minValB = smallestNumberInRealMatrix(face);
+    double maxValB = largestNumberInRealMatrix(face);
+
+    //std::cout << "Min value in face: " << minValB << std::endl;
+    //std::cout << "Max value in face: " << maxValB << std::endl;
+    displayImage(path, normalizedFace);
 
     std::string win = "window";
 
@@ -270,14 +309,15 @@ int main() {
 
     //displayImage(win, normedFace);
 
-    std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
+    //std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
+    std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\ten.pgm";
     Matrix image = importGrayscaleImage(path2);
-    //std::cout << "FACE TO FIND: " << std::endl;
-    //displayImage(path2, image);
-    Matrix result = FaceDB.matchFace(image, 0.9);
-    displayImage(path2, result);
-
-
+    std::cout << "FACE TO FIND: " << std::endl;
+    int resultIndex = 0;
+    Matrix result = FaceDB.matchFace(image, 0.5, resultIndex);
+    std::cout << "RESULT:\n " << std::endl;
+    Matrix normalizedResult = normalizeForDisplay(result);
+    displayImage(path2, normalizedResult);
 
     return 0;
 

@@ -12,6 +12,9 @@
     }
      */
 
+
+
+
 Matrix meanFlattenedFace(Matrix matrix);
 
 class FaceSpace {
@@ -43,9 +46,10 @@ public:
     Matrix getMeanFace();
     Matrix getEigenFaceEntry(int n); // Gets the nth flattened face in the eigen face database
 
-    Matrix matchFace(Matrix& faceToMatch, double similarityScore);
+    Matrix matchFace(Matrix& faceToMatch, double minDistanceThreshold, int& faceIndex); // minDistanceThreshold from 0 to 1
 
 
-    // todo display face, match face, remove face, and add face method
+
+    // do remove face, and add face method
 
 };

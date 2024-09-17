@@ -6,7 +6,18 @@ Matrix::Matrix(int nr, int nc) : numRows(nr), numCols(nc), entryData(nr, std::ve
         throw std::invalid_argument("Matrix(int nr, int nc): Invalid size");
     }
 }
-Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {}
+//Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols), entryData(matToCopy.entryData) {}
+
+Matrix::Matrix(const Matrix& matToCopy) : numRows(matToCopy.numRows), numCols(matToCopy.numCols) {
+    // Allocate new memory for entryData
+    entryData.resize(numRows);
+    for (int i = 0; i < numRows; ++i) {
+        entryData[i].resize(numCols);
+        for (int j = 0; j < numCols; ++j) {
+            entryData[i][j] = matToCopy.entryData[i][j];
+        }
+    }
+}
 
 Matrix::Matrix() : numRows(1), numCols(1) {}
 
@@ -26,6 +37,11 @@ Matrix Matrix::operator +(Matrix const& matrixToAdd) const {
 }
 
 Matrix Matrix::operator*(ComplexNum const& scalar) {
+
+    if (numRows <= 0 || numCols <= 0) {
+        throw std::runtime_error("Invalid matrix dimensions for multiplication.");
+    }
+
     Matrix matrixToReturn(this->numRows, this->numCols);
     for (int i = 0; i < this->numRows; i++) {
         for (int j = 0; j < this->numCols; j++) {
@@ -36,9 +52,14 @@ Matrix Matrix::operator*(ComplexNum const& scalar) {
 }
 
 Matrix Matrix::operator*(double numToMul) {
-    Matrix matrixToReturn(this->numRows, this->numRows);
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; j < numCols; j++) {
+
+    if (numRows <= 0 || numCols <= 0) {
+        throw std::runtime_error("Invalid matrix dimensions for multiplication.");
+    }
+
+    Matrix matrixToReturn(this->numRows, this->numCols);  // Correct dimensions
+    for (int i = 0; i < this->numRows; i++) {
+        for (int j = 0; j < this->numCols; j++) {
             matrixToReturn.entryData[i][j] = this->entryData[i][j] * numToMul;
         }
     }
@@ -46,9 +67,9 @@ Matrix Matrix::operator*(double numToMul) {
 }
 
 Matrix Matrix::operator /(ComplexNum const& numToDiv) {
-    Matrix matrixToReturn(this->numRows, this->numRows);
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; j < numCols; j++) {
+    Matrix matrixToReturn(this->numRows, this->numCols);  // Correct dimensions
+    for (int i = 0; i < this->numRows; i++) {
+        for (int j = 0; j < this->numCols; j++) {
             matrixToReturn.entryData[i][j] = this->entryData[i][j] / numToDiv;
         }
     }
@@ -80,17 +101,36 @@ Matrix Matrix::operator -(ComplexNum const& numToSub) const {
 }
 
 // Equals
+
+/*
 Matrix& Matrix::operator =(Matrix const& matrixToCopy) {
-    /*
-    if (this->numRows != matrixToCopy.numRows || this->numCols != matrixToCopy.numCols) {
-        throw std::invalid_argument("Matrix::operator =: Matrices not of same dimensions");
-    }
-     */
+
+
     this->numRows = matrixToCopy.numRows;
     this->numCols = matrixToCopy.numCols;
     this->entryData = matrixToCopy.entryData;
     return *this;
 }
+*/
+
+Matrix& Matrix::operator=(const Matrix& matToCopy) {
+    if (this != &matToCopy) {
+        numRows = matToCopy.numRows;
+        numCols = matToCopy.numCols;
+
+        // Resize entryData and copy elements
+        entryData.resize(numRows);
+        for (int i = 0; i < numRows; ++i) {
+            entryData[i].resize(numCols);
+            for (int j = 0; j < numCols; ++j) {
+                entryData[i][j] = matToCopy.entryData[i][j];
+            }
+        }
+    }
+    return *this;
+}
+
+
 bool Matrix::operator ==(const Matrix& otherMatrix) const {
     if (this->numRows != otherMatrix.numRows || this->numCols != otherMatrix.numCols) {
         return false;
@@ -235,3 +275,4 @@ bool hasNaN(Matrix &mat) {
 }
 
 
+// todo likely an issue dealing with eigenface grayscale conversion.
