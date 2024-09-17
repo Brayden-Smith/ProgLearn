@@ -16,16 +16,21 @@ Matrix meanFlattenedFace(Matrix matrixOfFlattenedFaces) {
 }
 
 
-FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) : faceDatabase(faceMatrixToAnalyze), eigenFaceDatabase(1, 1), numFaces(faceMatrixToAnalyze.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
+
+
+FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) :  eigenFaceDatabase(1, 1), numFaces(faceMatrixToAnalyze.getNumRows()), numEigenFaces(0), numFacesAdded(0), numFacesRemoved(0), numOfTopEigenFaces(0) {
+
     ComplexNum percentVarianceCNum(percentVariance, 0);
 
 
-
-
+    // Make a local copy for processing
     Matrix faceMatrix = faceMatrixToAnalyze;
-    ComplexNum number(1.0/255, 0);
+    // Proceed with scaling and other operations
+    faceMatrix = faceMatrix * (1.0 / 255);
 
-    faceMatrix = faceMatrix * number;
+    // Assign the scaled matrix to faceDatabase
+    faceDatabase = faceMatrix;
+
 
     meanFace = meanFlattenedFace(faceMatrix);
 
@@ -36,7 +41,6 @@ FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) : face
             meanSubtractedMatrix(i, j) = meanSubtractedMatrix(i, j) - meanFace(0, j);
         }
     }
-
 
 
     Matrix littleCovarianceMatrix = littleCovariance(meanSubtractedMatrix);
@@ -76,7 +80,7 @@ FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) : face
     ComplexNum eigenSum(0, 0);
     int k = 0;
 
-    while (eigenSum/totalVariance < percentVarianceCNum) {
+    while ((eigenSum/totalVariance).getRealPart() < (percentVarianceCNum).getRealPart() && k < eigenvalues.size()) {
         eigenSum += eigenvalues[k];
         k += 1;
     }
@@ -100,10 +104,6 @@ FaceSpace::FaceSpace(Matrix& faceMatrixToAnalyze, double percentVariance) : face
     eigenFaceDatabase = eigenFaceDatabaseBuilder;
     numEigenFaces = eigenFaceDatabase.getNumRows();
     numOfTopEigenFaces = k;
-
-
-
-
 
 
 }
@@ -169,20 +169,33 @@ Matrix FaceSpace::getEigenFaceEntry(int n) {
 }
 
 
-Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
+Matrix FaceSpace::matchFace(Matrix &faceToMatch, double minDistanceThreshold, int& faceIndex) {
+
+    if (minDistanceThreshold > 1 || minDistanceThreshold < 0) {
+        throw std::invalid_argument("FaceSpace::matchFace: minDistanceThreshold must be between 0 and 1 (inclusive)!");
+    }
+
+    Matrix scaledFaceToMatch = faceToMatch * (1.0/255);
 
     Matrix faceDatabaseCopy = faceDatabase;
-    int originalFaceNumRows = faceToMatch.getNumRows();
-    int originalFaceNumCols = faceToMatch.getNumCols();
+    int originalFaceNumRows = scaledFaceToMatch.getNumRows();
+    int originalFaceNumCols = scaledFaceToMatch.getNumCols();
     Matrix meanFaceMatrix = meanFace;
 
-    Matrix faceToMatchFlattened = flattenMatrix(faceToMatch);
+
+    Matrix faceToMatchFlattened = flattenMatrix(scaledFaceToMatch);
 
     Matrix faceToMatchColumnVector = conjTranspose(&faceToMatchFlattened);
     Matrix columnMeanFace = conjTranspose(&meanFaceMatrix);
+
+    std::cout << "faceToMatchColumnVector dimensions: " << faceToMatchColumnVector.getNumRows() << " x " << faceToMatchColumnVector.getNumCols() << std::endl;
+    std::cout << "columnMeanFace dimensions: " << columnMeanFace.getNumRows() << " x " << columnMeanFace.getNumCols() << std::endl;
+
+
     Matrix processedFaceColumnVector = faceToMatchColumnVector - columnMeanFace;
 
     Matrix faceToMatchWeightVector(numOfTopEigenFaces, 1);
+
 
     for (int i = 0; i < numOfTopEigenFaces; i++) {
         Matrix flattenedEigenFace(1, eigenFaceDatabase.getNumCols());
@@ -201,6 +214,8 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
 
 
     // Now go through each vector, project it to the eigenspace, and compare
+
+    std::cout << "going through each vector:" << std::endl;
 
     double minDistance = 2.1;
     int minDistFaceIndex = 0;
@@ -237,10 +252,13 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
 
 
 
+
+
         Matrix difference = projectionVector - faceToMatchWeightVector;
 
         double distance = VectorNorm(&difference);
-        //std::cout << "Candidate distance for face " << i << " is " << distance << std::endl;
+        std::cout << "Candidate distance for face " << i << " is " << distance << std::endl;
+
 
         if (distance < minDistance) {
             minDistance = distance;
@@ -249,8 +267,9 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
 
     }
 
-    if (minDistance == 2.1) {
+    if (minDistance > minDistanceThreshold * 2) {
         std::cout << "FaceSpace::matchFace: No match found!" << std::endl;
+        faceIndex = 0;
         return {1, 1};
     }
 
@@ -263,12 +282,10 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double similarityScore) {
         match(0, k) = cNumb;
     }
 
-
+    faceIndex = minDistFaceIndex;
     Matrix reconstructedFace = unflattenMatrix(match, originalFaceNumRows, originalFaceNumCols);
     return reconstructedFace;
 }
-
-
 
 
 

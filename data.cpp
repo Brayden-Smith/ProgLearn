@@ -3,6 +3,25 @@
 #include <opencv2/opencv.hpp>
 #include <fstream>
 
+Matrix normalizeForDisplay(Matrix& matrix) {
+    double minVal = smallestNumberInRealMatrix(matrix);
+    double maxVal = largestNumberInRealMatrix(matrix);
+    double range = maxVal - minVal;
+
+    Matrix normalizedMatrix(matrix.getNumRows(), matrix.getNumCols());
+    for (int i = 0; i < matrix.getNumRows(); i++) {
+        for (int j = 0; j < matrix.getNumCols(); j++) {
+            double value = matrix(i, j).getRealPart();
+            // Normalize to [0, 255]
+            double normalizedValue = ((value - minVal) / range) * 255.0;
+            // Ensure value is within [0, 255]
+            normalizedValue = std::max(0.0, std::min(255.0, normalizedValue));
+            normalizedMatrix(i, j) = ComplexNum(normalizedValue, 0);
+        }
+    }
+    return normalizedMatrix;
+}
+
 Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix) { // Converts a single-channel grayscale OpenCV matrix to a matrix object
     if (CVMatrix.channels() != 1) {
         throw std::invalid_argument("convertCVMatrixToMatrix: CVMatrix argument must only have one channel!");
@@ -42,18 +61,26 @@ cv::Mat convertMatrixToCVMatrix(Matrix& matrix) {
     return matrixToReturn;
 }
 
-cv::Mat convertMatrixToCVGrayscaleMatrix(Matrix& matrix) { // Converts a single-channel OpenCV matrix to a matrix object
+cv::Mat convertMatrixToCVGrayscaleMatrix(Matrix& matrix) {
     int numRows = matrix.getNumRows();
     int numCols = matrix.getNumCols();
     cv::Mat matrixToReturn(numRows, numCols, CV_8U);
 
+    double minVal = 255, maxVal = 0;
     for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
             double realPart = matrix(i, j).getRealPart();
-            matrixToReturn.at<uchar>(i, j) = static_cast<uchar>(std::max(0.0, std::min(255.0, realPart)));
+            // Do not scale if values are already in 0-255 range
+            double pixelValue = realPart;
+            // Ensure pixel values are within 0-255
+            pixelValue = std::max(0.0, std::min(255.0, pixelValue));
+            matrixToReturn.at<uchar>(i, j) = static_cast<uchar>(pixelValue);
+            if (pixelValue < minVal) minVal = pixelValue;
+            if (pixelValue > maxVal) maxVal = pixelValue;
         }
     }
 
+    std::cout << "Converted cv::Mat - Min value: " << minVal << ", Max value: " << maxVal << std::endl;
     return matrixToReturn;
 }
 

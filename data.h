@@ -2,6 +2,8 @@
 #include <opencv2/opencv.hpp>
 #include <fstream>
 
+Matrix normalizeForDisplay(Matrix& matrix);
+
 Matrix convertCVMatrixToMatrix(const cv::Mat& CVMatrix); // Converts a single-channel OpenCV matrix to a matrix object
 
 cv::Mat convertMatrixToCVMatrix(Matrix& matrix);
