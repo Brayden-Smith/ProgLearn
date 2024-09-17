@@ -2,6 +2,8 @@
 #include "Matrix.h"
 #include <set>
 #include <unordered_set>
+#include <opencv2/opencv.hpp>
+#include "data.h"
 
 
 void thresholdStabilize(Matrix* matrixToStabilize);
@@ -30,6 +32,7 @@ double VectorNorm(Matrix* pointerToMatrix);
 Matrix unitVector(int k, int dim);
 Matrix identityMatrix(int dim);
 Matrix frontFillVec(Matrix M, int dim, ComplexNum const& Fill);
+Matrix tridiagonalizeMatrix(Matrix& matrixToTri); // For our beloved symmetric AA* matrices
 Matrix householderReflection(Matrix* x);
 std::vector<Matrix> QRDecomp(Matrix const& A);
 
@@ -45,3 +48,10 @@ ComplexNum covariance(Matrix* Z, Matrix* W);
 Matrix covarianceMatrix(Matrix* M);
 
 Matrix littleCovariance(Matrix& matrix);
+
+std::vector<ComplexNum> CVEigenValues(Matrix& matrix); // Only when real eigenvalues are expected (symmetric matrices)
+std::vector<Matrix> CVEigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues); // Only when real eigenvalues are expected (symmetric matrices)
+
+double smallestNumberInRealMatrix(Matrix& matrix);
+double largestNumberInRealMatrix(Matrix& matrix);
+Matrix normalizeMatrix(Matrix& matrix, double maxVal, double minVal);

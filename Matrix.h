@@ -55,4 +55,8 @@ public:
 
     Matrix conjugate() const;
 
+
+
 };
+
+bool hasNaN(Matrix& mat);

@@ -1,13 +1,16 @@
 #include "LA.h"
+#include "Matrix.h"
+#include <opencv2/opencv.hpp>
+#include "data.h"
 
 void thresholdStabilize(Matrix* matrixToStabilize) {
     for (int i = 0; i < matrixToStabilize->getNumRows(); i++) {
         for (int j = 0; j < matrixToStabilize->getNumCols(); j++) {
-            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getRealPart()) < 1e-12) {
                 (*matrixToStabilize)(i,j) = ComplexNum(0, (*matrixToStabilize)(i,j).getImagPart());
                 //std::cout << "stab called";
             }
-            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-9) {
+            if (abs((*matrixToStabilize)(i,j).getImagPart()) < 1e-12) {
                 (*matrixToStabilize)(i,j) = ComplexNum((*matrixToStabilize)(i,j).getRealPart(), 0);
                 //std::cout<< "stab called";
             }
@@ -313,7 +316,7 @@ Matrix inverseMatrix(Matrix* matrixToInvert) { // Really, really slow. That bein
     return outputMatrix;
 }
 
-//gets magnitude of column matrix
+//gets magnitude of column matrixcolumnFace
 double VectorNorm(Matrix* pointerToMatrix) {
     double Norm = 0;
     for (int j = 0; j < pointerToMatrix->getNumRows(); j++) {
@@ -396,17 +399,94 @@ Matrix minorMatrix(Matrix M,int iDel, int jDel) {
     return Minor;
 }
 
-Matrix householderReflection(Matrix* x) {
+Matrix tridiagonalizeMatrix(Matrix& matrixToTri) {
+
+    if (matrixToTri.getNumCols() != matrixToTri.getNumRows()) {
+        throw std::invalid_argument("tridiagonalizeMatrix: Matrix is not square!");
+    }
+
+    Matrix A = matrixToTri;
+
+    for (int i = 0; i < matrixToTri.getNumRows() - 2; i++) { // Loop
+
+        // Step 1: Calculate alpha
+            // Get sign
+        int alphaSign = getRealSign(A(i+1, i));
+            // Get sum
+        ComplexNum alphaSum(0, 0);
+        for (int j = i + 1; j < A.getNumRows(); j++) {
+
+            ComplexNum a = A(j, i);
+
+            // Get power
+            ComplexNum numSquared = a * a;
+
+            alphaSum += numSquared;
+        }
+        // Square root sum
+        double sqrtSum = sqrt(alphaSum.getRealPart());
+        double alpha = -1 * alphaSign * sqrtSum;
+
+
+        // Step 2: Find r
+        ComplexNum entry = A(i+1, i);
+        double alphaEntry = (entry * alpha).getRealPart();
+        double difference = (1.0/2.0) * ((alpha * alpha) - alphaEntry);
+
+        double r = sqrt(difference);
+
+        // Construct vector
+        Matrix vector(A.getNumRows(), 1);
+
+        // Set first i positions to 0
+        for (int j = 0; j <= i; j++) {
+            vector(j, 0) = ComplexNum(0, 0);
+        }
+
+        vector(i+1, 0) = (entry - alpha) * (ComplexNum(1, 0)/(2*r));
+
+
+        for (int j = i+2; j < A.getNumRows(); j++) {
+            vector(j, 0) = (A(j, i) * (ComplexNum(1, 0)/(2*r)));
+        }
+
+        // Compute P
+        Matrix identity = identityMatrix(A.getNumRows());
+
+        Matrix vectorTranspose = conjTranspose(&vector);
+        Matrix vectorTransform = matMul(&vector, &vectorTranspose);
+        vectorTransform = vectorTransform * 2;
+
+        Matrix P = identity - vectorTransform;
+
+        A = matMul(&A, &P);
+        A = matMul(&P, &A);
+    }
+
+
+    return A;
+}
+
+
+
+
+
+Matrix householderReflection(Matrix* x) { //todo stabilize
+
+
     if (x->getNumCols() > 1) {
         throw std::invalid_argument("householderTransform: Invalid input");
     }
-
     Matrix y = (*x)(0,0).sign() * VectorNorm(x) * unitVector(0,x->getNumRows());
     y = *x + y;
+    //std::cout << "y dims: " << y.getNumRows() << " x " << y.getNumCols() << std::endl;
     return y;
+
+
+
 }
 
-std::vector<Matrix> QRDecomp(Matrix const& A) {
+std::vector<Matrix> QRDecomp(Matrix const& A) { //todo stabilize
 
     Matrix R = A;
     std::vector<Matrix> HTransforms;
@@ -458,7 +538,7 @@ std::vector<Matrix> QRDecomp(Matrix const& A) {
 bool isUpperTriangular(Matrix* mat) {
     for (int i = 0; i < mat->getNumCols(); ++i) {
         for (int j = i + 1; j < mat->getNumRows(); ++j) {
-            if (magnitudeOfNumber((*mat)(j, i)) > 1e-9) {
+            if (magnitudeOfNumber((*mat)(j, i)) > 1e-6) {
                 return false;
             }
         }
@@ -493,7 +573,7 @@ std::vector<ComplexNum> eigenvalues(Matrix* matrix) {
         return ret;
     }
 
-    Matrix matrixToIterate = (*matrix);
+    Matrix matrixToIterate = tridiagonalizeMatrix(*matrix);
     // Check to see if matrix is already upper triangular
 
 
@@ -565,14 +645,17 @@ std::vector<Matrix> eigenvectors(Matrix* matrix, std::vector<ComplexNum>& corres
         return ret;
     }
 
-    Matrix matrixToIterate = (*matrix);
+    Matrix matrixToIterate = tridiagonalizeMatrix(*matrix);
     // Check to see if matrix is already upper triangular
 
     Matrix cumulativeQ = identityMatrix(matrix->getNumCols());
 
     bool akIsUpperTriangular = isUpperTriangular(&matrixToIterate);
 
+
+    int counter = 0;
     while (!akIsUpperTriangular) {
+        counter += 1;
 
         Matrix subMatrix(2,2);
         int numRows = matrix->getNumRows();
@@ -855,8 +938,111 @@ Matrix covarianceMatrix(Matrix* M) {
 
 
 Matrix littleCovariance(Matrix& matrix) {
+    //std::cout << matrix << std::endl;
     Matrix matrixTranspose = conjTranspose(&matrix);
+    ComplexNum cNum(1.0/(matrix.getNumRows() - 1), 0);
+    matrixTranspose = matrixTranspose * cNum;
     Matrix product = matMul(&matrix, &matrixTranspose);
-    product = product * (1/(product.getNumRows()));
+    //std::cout << product << std::endl;
+    //product = product * (1.0/(product.getNumRows() - 1));
     return product;
+}
+
+
+std::vector<ComplexNum> CVEigenValues(Matrix& matrix) {
+    std::vector<ComplexNum> vectorToReturn;
+    cv::Mat CVMatrix = convertMatrixToCVMatrix(matrix);
+    cv::Mat CVEigenValues;
+
+    cv::eigen(CVMatrix, CVEigenValues);
+
+    int numEigenValues = CVEigenValues.rows;
+
+    for (int i = 0; i < numEigenValues; i++) {
+        double realValue = CVEigenValues.at<double>(i, 0); // Eigenvalue at row i, column 0
+        ComplexNum Cnum(realValue, 0);
+        vectorToReturn.push_back(Cnum);
+    }
+
+    return vectorToReturn;
+}
+
+std::vector<Matrix> CVEigenvectors(Matrix* matrix, std::vector<ComplexNum>& correspondingEigenValues) {
+    std::vector<ComplexNum> eigenValues;
+    std::vector<Matrix> eigenVectorMatrices;
+
+    cv::Mat CVMatrix = convertMatrixToCVMatrix(*matrix);
+    cv::Mat CVEigenValues;
+    cv::Mat CVEigenVectors;
+
+    cv::eigen(CVMatrix, CVEigenValues, CVEigenVectors);
+    int numEigenVectors = CVEigenVectors.rows;
+
+    // Extract eigenvectors
+    for (int i = 0; i < numEigenVectors; ++i) {
+        Matrix eigenVectorMatrix(numEigenVectors, 1);
+
+        for (int j = 0; j < numEigenVectors; ++j) {
+            double value = CVEigenVectors.at<double>(i, j);
+            eigenVectorMatrix(j, 0) = ComplexNum(value, 0);
+        }
+
+        eigenVectorMatrices.push_back(eigenVectorMatrix);
+    }
+
+
+    // Extract eigenvalues
+    for (int i = 0; i < numEigenVectors; i++) {
+        double realValue = CVEigenValues.at<double>(i, 0); // Eigenvalue at row i, column 0
+        ComplexNum Cnum(realValue, 0);
+        eigenValues.push_back(Cnum);
+    }
+
+    correspondingEigenValues = eigenValues;
+    return eigenVectorMatrices;
+
+}
+
+
+double smallestNumberInRealMatrix(Matrix& matrix) {
+    double currentSmallest = matrix(0, 0).getRealPart();
+    for (int i = 0; i < matrix.getNumRows(); i++) {
+        for (int j = 0; j < matrix.getNumCols(); j++) {
+            if (matrix(i, j).getRealPart() < currentSmallest) {
+                currentSmallest = matrix(i, j).getRealPart();
+            }
+        }
+    }
+
+    return currentSmallest;
+}
+
+double largestNumberInRealMatrix(Matrix& matrix) {
+    double currentLargest = matrix(0, 0).getRealPart();
+    for (int i = 0; i < matrix.getNumRows(); i++) {
+        for (int j = 0; j < matrix.getNumCols(); j++) {
+            if (matrix(i, j).getRealPart() > currentLargest) {
+                currentLargest = matrix(i, j).getRealPart();
+            }
+        }
+    }
+
+    return currentLargest;
+}
+
+Matrix normalizeMatrix(Matrix& matrix, double maxVal, double minVal) {
+    double difference = maxVal - minVal;
+    Matrix normedMatrix(matrix.getNumRows(), matrix.getNumCols());
+
+    for (int i = 0; i < matrix.getNumRows(); i++) {
+        for (int j = 0; j < matrix.getNumCols(); j++) {
+            double normedVal = (matrix(i, j).getRealPart() - minVal) / (difference) * 255.0;
+
+            normedMatrix(i, j) = static_cast<unsigned char>(std::round(std::max(0.0, std::min(255.0, normedVal))));
+        }
+
+    }
+
+    return normedMatrix;
+
 }

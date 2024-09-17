@@ -203,4 +203,27 @@ double getRealSign(ComplexNum num) {
     } else{
         return -1;
     }
+
 }
+
+ComplexNum power(ComplexNum num, int power) {
+    if (power == 0) {
+        return ComplexNum(1, 0);
+    }
+    if (power > 0) {
+        ComplexNum intProduct(1, 0);
+        for (int i = 0; i < power; i++) {
+            intProduct = intProduct * num;
+        }
+        return intProduct;
+    }
+
+    int posPower = power * -1;
+    ComplexNum intProduct(1, 0);
+    for (int i = 0; i < posPower; i++) {
+        intProduct = intProduct * num;
+    }
+    ComplexNum numToReturn = ComplexNum(1, 0)/(intProduct);
+    return numToReturn;
+}
+
