@@ -1,5 +1,12 @@
 #include "ComplexNum.h"
 
+void ComplexNum::calculateMagnitude() {
+    if(imagPart == 0) {
+        magnitude = realPart;
+    }
+
+    magnitude = sqrt(pow(realPart,2) + pow(imagPart,2));
+}
 
 // Constructor
 ComplexNum::ComplexNum(double a, double b) : realPart(a), imagPart(b) {}
@@ -95,6 +102,20 @@ ComplexNum ComplexNum::operator/(ComplexNum const& numToDiv) const {
     return {a,b};
 }
 
+//positive whole number exponentiation
+ComplexNum ComplexNum::operator^(const ComplexNum &degree) const {
+
+    if(degree == 0) {
+        return {1,0};
+    }
+
+    ComplexNum result(0,0);
+    for(int i = 0; i < degree; i++) {
+        result = result * *this;
+    }
+    return result;
+}
+
 std::ostream& operator<<(std::ostream& outputStream, const ComplexNum& numberToPrint) {
     double rp = numberToPrint.getRealPart();
     double ip = numberToPrint.getImagPart();
@@ -126,6 +147,10 @@ double ComplexNum::getImagPart() const {
     return this->imagPart;
 }
 
+double ComplexNum::getMagnitude() const {
+    return magnitude;
+}
+
 //Mutators
 void ComplexNum::setRealPart(double value) {
     this->realPart = value;
@@ -135,12 +160,7 @@ void ComplexNum::setImagPart(double value) {
 }
 
 //Methods
-double ComplexNum::getMagnitude() const {
-    if (imagPart == 0) {
-        return abs(realPart);
-    }
-    return sqrt((realPart * realPart) + (imagPart * imagPart));
-}
+
 ComplexNum ComplexNum::getConjugate() const {
     ComplexNum numToReturn;
     numToReturn.realPart = this->realPart;

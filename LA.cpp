@@ -68,6 +68,21 @@ double realTraceOfMatrix(Matrix* matrixToTrace) { // Only defined for real matri
     return runningTrace;
 }
 
+
+ComplexNum TraceOfMatrix(Matrix* matrixToTrace) { // generalized to complex idk if changing above functions breaks stuff
+    if (matrixToTrace->getNumRows() != matrixToTrace->getNumCols()) {
+        throw std::invalid_argument("realTraceOfMatrix: Trace is only defined for square matrices");
+    }
+
+    ComplexNum runningTrace(0,0);
+    for (int i = 0; i < matrixToTrace->getNumRows(); i++) {
+        ComplexNum numberToAddToRunningTrace((*matrixToTrace)(i,i));
+        runningTrace += numberToAddToRunningTrace;
+    }
+
+    return runningTrace;
+}
+
 Matrix conjTranspose(Matrix* matrixToTranspose) {
     Matrix matrixToReturn(matrixToTranspose->getNumCols(), matrixToTranspose->getNumRows());
     for (int i = 0; i < matrixToTranspose->getNumRows(); i++) {
@@ -90,11 +105,11 @@ Matrix transpose(Matrix* matrixToTranspose) {
     return matrixToReturn;
 }
 
-double frobeniusNorm(Matrix* matrixToNorm) {
+ComplexNum frobeniusNorm(Matrix* matrixToNorm) {
     Matrix conjugateTransposeMatrix = conjTranspose(matrixToNorm);
     Matrix matrixStarMatrix = matMul(&conjugateTransposeMatrix, matrixToNorm);
     //std::cout << "Matrix mul has dimensions " << matrixStarMatrix.numRows << "x" << matrixStarMatrix.numCols << std::endl;
-    double trace = realTraceOfMatrix(&matrixStarMatrix);
+    ComplexNum trace = TraceOfMatrix(&matrixStarMatrix);
     return sqrt(trace);
 }
 

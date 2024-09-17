@@ -14,7 +14,7 @@ Matrix hadamardProduct(Matrix* lhs, Matrix* rhs);
 double realTraceOfMatrix(Matrix* matrixToTrace);
 Matrix conjTranspose (Matrix* matrixToTranspose);
 Matrix transpose (Matrix* matrixToTranspose);
-double frobeniusNorm(Matrix* matrixToNorm);
+ComplexNum frobeniusNorm(Matrix* matrixToNorm);
 
 ComplexNum innerProduct(Matrix& u, Matrix& v);
 ComplexNum mean(Matrix& u);
