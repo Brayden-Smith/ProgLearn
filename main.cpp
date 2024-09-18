@@ -314,7 +314,7 @@ int main() {
     Matrix image = importGrayscaleImage(path2);
     std::cout << "FACE TO FIND: " << std::endl;
     int resultIndex = 0;
-    Matrix result = FaceDB.matchFace(image, 0.5, resultIndex);
+    Matrix result = FaceDB.matchFace(image, 0, resultIndex);
     std::cout << "RESULT:\n " << std::endl;
     Matrix normalizedResult = normalizeForDisplay(result);
     displayImage(path2, normalizedResult);

@@ -169,10 +169,10 @@ Matrix FaceSpace::getEigenFaceEntry(int n) {
 }
 
 
-Matrix FaceSpace::matchFace(Matrix &faceToMatch, double minDistanceThreshold, int& faceIndex) {
+Matrix FaceSpace::matchFace(Matrix &faceToMatch, double percentSensitivity, int& faceIndex) {
 
-    if (minDistanceThreshold > 1 || minDistanceThreshold < 0) {
-        throw std::invalid_argument("FaceSpace::matchFace: minDistanceThreshold must be between 0 and 1 (inclusive)!");
+    if (percentSensitivity > 1 || percentSensitivity < 0) {
+        throw std::invalid_argument("FaceSpace::matchFace: percentSensitivity must be between 0 and 1 (inclusive)!");
     }
 
     Matrix scaledFaceToMatch = faceToMatch * (1.0/255);
@@ -217,7 +217,7 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double minDistanceThreshold, in
 
     std::cout << "going through each vector:" << std::endl;
 
-    double minDistance = 2.1;
+    double minDistance = 1.5;
     int minDistFaceIndex = 0;
 
 
@@ -256,7 +256,7 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double minDistanceThreshold, in
 
         Matrix difference = projectionVector - faceToMatchWeightVector;
 
-        double distance = VectorNorm(&difference);
+        double distance = sqrt(VectorNorm(&difference));
         std::cout << "Candidate distance for face " << i << " is " << distance << std::endl;
 
 
@@ -267,24 +267,43 @@ Matrix FaceSpace::matchFace(Matrix &faceToMatch, double minDistanceThreshold, in
 
     }
 
-    if (minDistance > minDistanceThreshold * 2) {
+    double thresholdDistance = (1 - percentSensitivity) * sqrt(2);
+
+
+    if (percentSensitivity == 1.0 && minDistance == 0) {
+        std::cout << "Perfect match found!" << std::endl;
+        faceIndex = minDistFaceIndex;
+        Matrix match(1, faceDatabase.getNumCols());
+
+        for (int k = 0; k < faceDatabase.getNumCols(); k++) {
+            ComplexNum cNumb = faceDatabaseCopy(minDistFaceIndex, k);
+            match(0, k) = cNumb;
+        }
+
+        Matrix reconstructedFace = unflattenMatrix(match, originalFaceNumRows, originalFaceNumCols);
+        return reconstructedFace;
+    }
+
+    else if (minDistance > thresholdDistance) {
         std::cout << "FaceSpace::matchFace: No match found!" << std::endl;
         faceIndex = 0;
         return {1, 1};
+    } else {
+        std::cout << "Match found with face index: " << minDistFaceIndex << std::endl;
+        Matrix match(1, faceDatabase.getNumCols());
+
+        for (int k = 0; k < faceDatabase.getNumCols(); k++) {
+            ComplexNum cNumb = faceDatabaseCopy(minDistFaceIndex, k);
+            match(0, k) = cNumb;
+        }
+
+        faceIndex = minDistFaceIndex;
+        Matrix reconstructedFace = unflattenMatrix(match, originalFaceNumRows, originalFaceNumCols);
+        return reconstructedFace;
     }
 
 
 
-    Matrix match(1, faceDatabase.getNumCols());
-
-    for (int k = 0; k < faceDatabase.getNumCols(); k++) {
-        ComplexNum cNumb = faceDatabaseCopy(minDistFaceIndex, k);
-        match(0, k) = cNumb;
-    }
-
-    faceIndex = minDistFaceIndex;
-    Matrix reconstructedFace = unflattenMatrix(match, originalFaceNumRows, originalFaceNumCols);
-    return reconstructedFace;
 }
 
 
