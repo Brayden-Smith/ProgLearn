@@ -46,7 +46,7 @@ public:
     Matrix getMeanFace();
     Matrix getEigenFaceEntry(int n); // Gets the nth flattened face in the eigen face database
 
-    Matrix matchFace(Matrix& faceToMatch, double minDistanceThreshold, int& faceIndex); // minDistanceThreshold from 0 to 1
+    Matrix matchFace(Matrix& faceToMatch, double percentSensitivity, int& faceIndex); // percentSensitivity from 0 to 1. 1 means very sensitive (need better match) to changes in face angle, light, etc.
 
 
 
