@@ -1,5 +1,6 @@
 #include "ComplexNum.h"
 
+//calculate magnitude
 void ComplexNum::calculateMagnitude() {
     if(imagPart == 0) {
         magnitude = realPart;
@@ -8,14 +9,20 @@ void ComplexNum::calculateMagnitude() {
     magnitude = sqrt(pow(realPart,2) + pow(imagPart,2));
 }
 
+//calculate theta
+void ComplexNum::calculateTheta() {
+    double YonX = imagPart / realPart;
+    theta = atan(YonX);
+}
+
 // Constructor
 ComplexNum::ComplexNum(double a, double b) : realPart(a), imagPart(b) {}
 
 // Equality operators
 ComplexNum& ComplexNum::operator=(ComplexNum const& numToCopy) {
     if (this != &numToCopy) {
-        this->realPart = numToCopy.realPart;
-        this->imagPart = numToCopy.imagPart;
+        this->realPart = numToCopy.getRealPart();
+        this->imagPart = numToCopy.getImagPart();
     }
     return *this;
 }
@@ -55,8 +62,8 @@ bool ComplexNum::operator<(const ComplexNum& otherNum) const {
 // Copy constructors
 
 ComplexNum::ComplexNum(const ComplexNum& numToCopy) {
-    this->realPart = numToCopy.realPart;
-    this->imagPart = numToCopy.imagPart;
+    this->realPart = numToCopy.getRealPart();
+    this->imagPart = numToCopy.getImagPart();
 }
 ComplexNum::ComplexNum(double numToCopy) {
     this->realPart = numToCopy;
@@ -103,17 +110,17 @@ ComplexNum ComplexNum::operator/(ComplexNum const& numToDiv) const {
 }
 
 //positive whole number exponentiation
-ComplexNum ComplexNum::operator^(const ComplexNum &degree) const {
+ComplexNum ComplexNum::operator^(const ComplexNum &degree) {
+    calculateMagnitude();
+    calculateTheta();
 
-    if(degree == 0) {
-        return {1,0};
-    }
+    this->realPart = pow(magnitude, degree.getRealPart()) * std::exp(-theta * degree.getImagPart());
+    this->imagPart = theta * degree.getRealPart() + degree.getImagPart() * std::log(magnitude);
 
-    ComplexNum result(0,0);
-    for(int i = 0; i < degree; i++) {
-        result = result * *this;
-    }
-    return result;
+    this->realPart = this->realPart * cos(this->imagPart);
+    this->imagPart = this->realPart * sin(this->imagPart);
+
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& outputStream, const ComplexNum& numberToPrint) {
@@ -147,8 +154,12 @@ double ComplexNum::getImagPart() const {
     return this->imagPart;
 }
 
-double ComplexNum::getMagnitude() const {
+double ComplexNum::getMagnitude() {
+    calculateMagnitude();
     return magnitude;
+}
+double ComplexNum::getTheta() const {
+    return theta;
 }
 
 //Mutators

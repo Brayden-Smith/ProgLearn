@@ -31,6 +31,9 @@ int main() {
     ComplexNum w(2, 3);
     assert((z*w).getImagPart() == 13);
     assert((z*w).getRealPart() == 0);
+    ComplexNum a(2,0);
+    ComplexNum b(2,0);
+    assert((a^b) == ComplexNum(4,0));
 
     // Matrix test asserts
     Matrix A(2, 2);
@@ -310,7 +313,7 @@ int main() {
     //displayImage(win, normedFace);
 
     //std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\one.pgm";
-    std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\ten.pgm";
+    /*std::string path2 = "C:\\Users\\chris\\Desktop\\Faces\\ten.pgm";
     Matrix image = importGrayscaleImage(path2);
     std::cout << "FACE TO FIND: " << std::endl;
     int resultIndex = 0;
@@ -318,8 +321,11 @@ int main() {
     std::cout << "RESULT:\n " << std::endl;
     Matrix normalizedResult = normalizeForDisplay(result);
     displayImage(path2, normalizedResult);
+     */
 
     return 0;
+
+
 
 
 }

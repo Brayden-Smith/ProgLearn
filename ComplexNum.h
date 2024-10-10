@@ -5,15 +5,16 @@
 
 class ComplexNum {
 private:
-    //Internal values
+    //Cartesian coordinates
     double realPart;
     double imagPart;
 
+    //Polar coordinates
     double magnitude;
     double theta;
-
     void calculateMagnitude();
     void calculateTheta();
+    // !WARNING! YOU ARE EXPECTED TO CALCULATE POLAR COORDINATES IN ALL FUNCTIONS THAT NEED THEM !WARNING!
 public:
     //Constructor
     ComplexNum (double a = 0, double b= 0);
@@ -40,12 +41,13 @@ public:
     ComplexNum operator-(double numToSub) const;
     ComplexNum operator/(double numToDiv) const;
     ComplexNum operator/(ComplexNum const& numToDiv) const;
-    ComplexNum operator^(ComplexNum const& degree) const;
+    ComplexNum operator^(ComplexNum const& degree);
 
     //Accessors
     double getRealPart() const;
     double getImagPart() const;
-    double getMagnitude() const;
+    double getMagnitude();
+    double getTheta() const;
 
     //Mutators
     void setRealPart(double value);
