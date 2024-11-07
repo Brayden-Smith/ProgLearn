@@ -22,7 +22,7 @@ Our goal with ProgLearn is to demystify machine learning from the ground up. By 
 
 Here’s an example output from the Eigenfaces algorithm, showing how ProgLearn can identify and represent facial features:
 
-![alt text]([http://url/to/img.png](https://github.com/Brayden-Smith/ProgLearn/blob/main/image.png))
+![Eigenfaces example](https://github.com/Brayden-Smith/ProgLearn/blob/main/image.png?raw=true)
 
 ### How It Works
 
