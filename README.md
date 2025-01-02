@@ -16,7 +16,7 @@ Our goal with ProgLearn is to demystify machine learning from the ground up. By 
 ### Tech Stack
 
 - **Core Components**: Implemented basic linear algebra operations and complex numbers from scratch.
-- **Languages**: The library is primarily written in Python, leveraging minimal dependencies to maximize custom code implementation.
+- **Languages**: The library is primarily written in C++, leveraging minimal dependencies to maximize custom code implementation.
 
 ### Example: Eigenfaces Algorithm
 
